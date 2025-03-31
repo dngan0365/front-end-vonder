@@ -1,0 +1,50 @@
+{
+    "NavbarLinks": {
+        "home": "Home",
+        "about": "About",
+        "contact": "Contact",
+        "services": "Services",
+        "blog": "Blog",
+        "portfolio": "Portfolio",
+        "testimonials": "Testimonials",
+        "faq": "FAQ"
+    },
+    "HomePage": {
+        "welcome": "Welcome to Our Website",
+        "about": "About",
+        "intro": "We are glad to have you here. Explore our services and offerings.",
+        "cta": "Get Started",
+        "features": {
+            "feature1": "Feature 1",
+            "feature2": "Feature 2",
+            "feature3": "Feature 3"
+        }
+    },
+    "AboutPage": {
+        "title": "About Us",
+        "description": "We are a company dedicated to providing the best services to our customers.",
+        "mission": "Our Mission",
+        "vision": "Our Vision",
+        "team": "Meet Our Team"
+    },
+    "ProfilePage": {
+        "title": "User Profile",
+        "editProfile": "Edit Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "notifications": "Notifications",
+        "messages": "Messages"
+    },
+    "ContactPage": {
+        "title": "Contact Us",
+        "address": "Address",
+        "phone": "Phone",
+        "email": "Email",
+        "sendMessage": "Send Message",
+        "form": {
+            "name": "Name",
+            "subject": "Subject",
+            "message": "Message"
+        }
+    }
+}
