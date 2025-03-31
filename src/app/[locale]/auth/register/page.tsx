@@ -7,34 +7,40 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function Login() {
+export default function Register() {
   const t = useTranslations('Auth');
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   
-  // Use the auth context instead of local state
-  const { login, loading, error, isAuthenticated, clearError, user } = useAuth();
+  // Use the auth context
+  const { register, loading, error, isAuthenticated, clearError } = useAuth();
 
   // Redirect if user is already authenticated
   useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.role === 'ADMIN') {
-        router.push('/admin/location');
-      } else {
-        router.push('/');
-      }
+    if (isAuthenticated) {
+      router.push('/');
     }
-  }, [isAuthenticated, router, user]);
+  }, [isAuthenticated, router]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    clearError(); // Clear any previous errors
-    await login(email, password);
+    clearError();
+    setPasswordError('');
+    
+    if (password !== confirmPassword) {
+      setPasswordError(t('passwordsDontMatch'));
+      return;
+    }
+    
+    await register(email, name, password);
   };
 
-  const handleGoogleLogin = async () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  const handleGoogleRegister = async () => {
+    window.location.href = '/api/auth/google';
   };
 
   return (
@@ -42,18 +48,33 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {t('login')}
+            {t('createAccount')}
           </h2>
         </div>
         
-        {error && (
+        {(error || passwordError) && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-            <p className="text-red-700">{error}</p>
+            <p className="text-red-700">{error || passwordError}</p>
           </div>
         )}
         
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="mt-8 space-y-6" onSubmit={handleRegister}>
           <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                {t('name')}
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder={t('name')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
             <div>
               <label htmlFor="email-address" className="sr-only">
                 {t('email')}
@@ -64,7 +85,7 @@ export default function Login() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder={t('email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -78,33 +99,27 @@ export default function Login() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder={t('password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                {t('rememberMe')}
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                {t('confirmPassword')}
               </label>
-            </div>
-
-            <div className="text-sm">
-              <Link href="/auth/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
-                {t('forgotPassword')}
-              </Link>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder={t('confirmPassword')}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </div>
           </div>
 
@@ -114,7 +129,7 @@ export default function Login() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? t('loggingIn') : t('login')}
+              {loading ? t('registering') : t('register')}
             </button>
           </div>
         </form>
@@ -133,10 +148,10 @@ export default function Login() {
 
           <div className="mt-6">
             <button
-              onClick={handleGoogleLogin}
+              onClick={handleGoogleRegister}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <Image src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google logo" width={20} height={20} className="mr-2" />
+              <Image src="/google-logo.svg" alt="Google logo" width={20} height={20} className="mr-2" />
               {t('continueWithGoogle')}
             </button>
           </div>
@@ -144,9 +159,9 @@ export default function Login() {
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
-            {t('noAccount')}{' '}
-            <Link href="/auth/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              {t('register')}
+            {t('alreadyHaveAccount')}{' '}
+            <Link href="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              {t('login')}
             </Link>
           </p>
         </div>
