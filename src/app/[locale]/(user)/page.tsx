@@ -4,12 +4,12 @@ import Image from "next/image";
 import { getMessages } from 'next-intl/server';
  
 export async function generateMetadata({
-  params: {locale},
+  params,
 }: {
   params: {locale: string};
 }): Promise<{ title: string }> {
-  const messages = await getMessages({locale});
-  const title = messages.Home.title;
+  const messages = await getMessages({locale: params.locale});
+  const title = messages?.HomePage?.title || 'Vietnam Tours';
   return {
     title
   };

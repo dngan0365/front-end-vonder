@@ -1,0 +1,120 @@
+{
+    "Navbar": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "contact": "Liên hệ",
+        "blog": "Blog",
+        "projects": "Dự án",
+        "services": "Dịch vụ",
+        "portfolio": "Danh mục đầu tư",
+        "testimonials": "Nhận xét",
+        "faq": "Câu hỏi thường gặp"
+    },
+    "NavbarLinks": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "contact": "Liên hệ",
+        "services": "Dịch vụ",
+        "blog": "Blog",
+        "portfolio": "Danh mục đầu tư",
+        "testimonials": "Nhận xét",
+        "faq": "Câu hỏi thường gặp",
+        "login": "Đăng nhập",
+        "profile": "Hồ sơ"
+    },
+    "HomePage": {
+        "welcome": "Chào mừng đến với trang web của chúng tôi",
+        "about": "Chào mừng đến với trang web của chúng tôi",
+        "intro": "Chúng tôi rất vui khi có bạn ở đây. Khám phá các dịch vụ và sản phẩm của chúng tôi.",
+        "cta": "Bắt đầu ngay",
+        "features": {
+            "feature1": "Tính năng 1",
+            "feature2": "Tính năng 2",
+            "feature3": "Tính năng 3"
+        }
+    },
+    "Homepage": {
+        "welcome": "Chào mừng đến với trang web của chúng tôi",
+        "about": "Giới thiệu",
+        "intro": "Chúng tôi rất vui khi có bạn ở đây. Khám phá các dịch vụ và sản phẩm của chúng tôi.",
+        "cta": "Bắt đầu ngay"
+    },
+    "AboutPage": {
+        "title": "Giới thiệu",
+        "content": "Chào mừng đến với trang giới thiệu của chúng tôi. Chúng tôi là một công ty về dịch vụ và sản phẩm. Chúng tôi cung cấp các dịch vụ và sản phẩm chất lượng cao.",
+        "description": "Chúng tôi là công ty chuyên cung cấp dịch vụ tốt nhất cho khách hàng.",
+        "mission": "Sứ mệnh của chúng tôi",
+        "vision": "Tầm nhìn của chúng tôi",
+        "team": "Đội ngũ của chúng tôi"
+    },
+    "ProfilePage": {
+        "title": "Hồ sơ người dùng",
+        "editProfile": "Chỉnh sửa hồ sơ",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất",
+        "notifications": "Thông báo",
+        "messages": "Tin nhắn"
+    },
+    "Profile": {
+        "userProfile": "Hồ sơ người dùng",
+        "accountDetails": "Thông tin tài khoản",
+        "logout": "Đăng xuất",
+        "authRequired": "Yêu cầu xác thực",
+        "pleaseLogin": "Vui lòng đăng nhập để xem hồ sơ của bạn",
+        "goToLogin": "Đi đến trang đăng nhập"
+    },
+    "ContactPage": {
+        "title": "Liên hệ với chúng tôi",
+        "address": "Địa chỉ",
+        "phone": "Điện thoại",
+        "email": "Email",
+        "sendMessage": "Gửi tin nhắn",
+        "form": {
+            "name": "Tên",
+            "subject": "Chủ đề",
+            "message": "Tin nhắn"
+        }
+    },
+    "Auth": {
+        "login": "Đăng nhập",
+        "loggingIn": "Đang đăng nhập...",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "rememberMe": "Ghi nhớ đăng nhập",
+        "forgotPassword": "Quên mật khẩu?",
+        "orContinueWith": "Hoặc",
+        "continueWithGoogle": "Tiếp tục với Google",
+        "noAccount": "Chưa có tài khoản?",
+        "register": "Đăng ký",
+        "createAccount": "Tạo tài khoản mới",
+        "name": "Họ và tên",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "passwordsDontMatch": "Mật khẩu không khớp",
+        "registering": "Đang tạo tài khoản...",
+        "alreadyHaveAccount": "Đã có tài khoản?"
+    },
+    "Admin": {
+        "profile": "Hồ sơ quản trị viên",
+        "accountInformation": "Thông tin tài khoản",
+        "securitySettings": "Cài đặt bảo mật",
+        "name": "Họ và tên",
+        "email": "Email",
+        "role": "Vai trò",
+        "memberSince": "Thành viên từ",
+        "password": "Mật khẩu",
+        "currentPassword": "Mật khẩu hiện tại",
+        "newPassword": "Mật khẩu mới",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "changePassword": "Đổi mật khẩu",
+        "editProfile": "Chỉnh sửa hồ sơ",
+        "cancel": "Hủy",
+        "saveChanges": "Lưu thay đổi",
+        "passwordsDoNotMatch": "Mật khẩu không khớp",
+        "profileUpdatedSuccessfully": "Cập nhật hồ sơ thành công",
+        "errorUpdatingProfile": "Lỗi khi cập nhật hồ sơ",
+        "locationManagement": "Quản lý địa điểm",
+        "adminPanel": "Bảng điều khiển quản trị",
+        "locations": "Địa điểm",
+        "logout": "Đăng xuất"
+    }
+}

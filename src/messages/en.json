@@ -1,0 +1,108 @@
+{
+    "NavbarLinks": {
+        "home": "Home",
+        "about": "About",
+        "contact": "Contact",
+        "services": "Services",
+        "blog": "Blog",
+        "portfolio": "Portfolio",
+        "testimonials": "Testimonials",
+        "faq": "FAQ",
+        "login": "Log In",
+        "profile": "Profile"
+    },
+    "HomePage": {
+        "welcome": "Welcome to Our Website",
+        "about": "About",
+        "intro": "We are glad to have you here. Explore our services and offerings.",
+        "cta": "Get Started",
+        "features": {
+            "feature1": "Feature 1",
+            "feature2": "Feature 2",
+            "feature3": "Feature 3"
+        }
+    },
+    "Homepage": {
+        "welcome": "Welcome to Our Website",
+        "about": "About",
+        "intro": "We are glad to have you here. Explore our services and offerings.",
+        "cta": "Get Started"
+    },
+    "AboutPage": {
+        "title": "About Us",
+        "description": "We are a company dedicated to providing the best services to our customers.",
+        "mission": "Our Mission",
+        "vision": "Our Vision",
+        "team": "Meet Our Team"
+    },
+    "ProfilePage": {
+        "title": "User Profile",
+        "editProfile": "Edit Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "notifications": "Notifications",
+        "messages": "Messages"
+    },
+    "Profile": {
+        "userProfile": "User Profile",
+        "accountDetails": "Account Details",
+        "logout": "Log Out",
+        "authRequired": "Authentication Required",
+        "pleaseLogin": "Please log in to view your profile",
+        "goToLogin": "Go to Login"
+    },
+    "ContactPage": {
+        "title": "Contact Us",
+        "address": "Address",
+        "phone": "Phone",
+        "email": "Email",
+        "sendMessage": "Send Message",
+        "form": {
+            "name": "Name",
+            "subject": "Subject",
+            "message": "Message"
+        }
+    },
+    "Auth": {
+        "login": "Login",
+        "loggingIn": "Logging in...",
+        "email": "Email",
+        "password": "Password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot your password?",
+        "orContinueWith": "Or",
+        "continueWithGoogle": "Continue with Google",
+        "noAccount": "Don't have an account?",
+        "register": "Register",
+        "createAccount": "Create an account",
+        "name": "Full Name",
+        "confirmPassword": "Confirm Password",
+        "passwordsDontMatch": "Passwords don't match",
+        "registering": "Creating account...",
+        "alreadyHaveAccount": "Already have an account?"
+    },
+    "Admin": {
+        "profile": "Admin Profile",
+        "accountInformation": "Account Information",
+        "securitySettings": "Security Settings",
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "memberSince": "Member Since",
+        "password": "Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "changePassword": "Change Password",
+        "editProfile": "Edit Profile",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "profileUpdatedSuccessfully": "Profile updated successfully",
+        "errorUpdatingProfile": "Error updating profile",
+        "locationManagement": "Location Management",
+        "adminPanel": "Admin Panel",
+        "locations": "Locations",
+        "logout": "Logout"
+    }
+}
