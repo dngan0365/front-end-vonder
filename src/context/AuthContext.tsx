@@ -39,6 +39,15 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
 // AuthProvider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -104,9 +113,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       
       setIsAuthenticated(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to login');
-      console.error('Login error:', err);
+    } catch (err: unknown) { // Change from any to unknown
+      const error = err as ApiError; // Type assertion
+      setError(error.response?.data?.message || error.message || 'Failed to login');
+      console.error('Login error:', error);
     } finally {
       setLoading(false);
     }
@@ -122,9 +132,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Registration response:', response); // Debugging line
       setUser(response.user);
       setIsAuthenticated(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to register');
-      console.error('Registration error:', err);
+    } catch (err: unknown) { // Change from any to unknown
+      const error = err as ApiError; // Type assertion
+      setError(error.response?.data?.message || error.message || 'Failed to register');
+      console.error('Registration error:', error);
     } finally {
       setLoading(false);
     }

@@ -1,17 +1,5 @@
 import axiosInstance from './axiosInstance';
 
-// Types for authentication requests and responses
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface RegisterRequest {
-  email: string;
-  name: string;
-  password: string;
-}
-
 interface AuthResponse {
   token: string;
   user: {

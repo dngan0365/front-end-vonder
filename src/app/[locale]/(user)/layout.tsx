@@ -1,15 +1,20 @@
+'use client';
+
+import React from 'react';
 import Navbar from "@/components/navbar/navbar";
+import { useParams } from 'next/navigation';
 
 export default function UserLayout({
   children,
-  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
 }) {
+  const params = useParams();
+  const locale = params.locale as string;
+  
   return (
     <div>
-      <Navbar locale={params.locale} />
+      <Navbar locale={locale} />
       <main>
         {children}
       </main>

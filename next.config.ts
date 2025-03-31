@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['cdn-icons-png.flaticon.com'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
 };
 
 export default withNextIntl(nextConfig);

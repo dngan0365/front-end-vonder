@@ -2,13 +2,16 @@ import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import Image from "next/image";
 import { getMessages } from 'next-intl/server';
+import { Metadata } from 'next';
  
-export async function generateMetadata({
-  params,
-}: {
-  params: {locale: string};
-}): Promise<{ title: string }> {
-  const messages = await getMessages({locale: params.locale});
+type GenerateMetadataProps = {
+  params: { locale: string }
+}
+
+export async function generateMetadata(
+  props: GenerateMetadataProps
+): Promise<{ title: string }> {
+  const messages = await getMessages({locale: props.params.locale});
   const title = messages?.HomePage?.title || 'Vietnam Tours';
   return {
     title

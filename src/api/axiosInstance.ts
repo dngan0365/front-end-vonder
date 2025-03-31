@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 
 // Define base API URL - using the NEXT_PUBLIC_ prefix
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;

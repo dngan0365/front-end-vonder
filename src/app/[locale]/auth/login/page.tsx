@@ -25,7 +25,7 @@ export default function Login() {
         router.push('/');
       }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, user]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
