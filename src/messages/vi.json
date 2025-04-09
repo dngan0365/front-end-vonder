@@ -1,8 +1,8 @@
 {
     "Navbar": {
-        "home": "Trang chủ",
-        "about": "Giới thiệu",
-        "contact": "Liên hệ",
+        "Places": "Điểm đến",
+        "Things": "Hoạt động",
+        "Forum": "Diễn đàn",
         "blog": "Blog",
         "projects": "Dự án",
         "services": "Dịch vụ",
@@ -23,15 +23,7 @@
         "profile": "Hồ sơ"
     },
     "HomePage": {
-        "welcome": "Chào mừng đến với trang web của chúng tôi",
-        "about": "Chào mừng đến với trang web của chúng tôi",
-        "intro": "Chúng tôi rất vui khi có bạn ở đây. Khám phá các dịch vụ và sản phẩm của chúng tôi.",
-        "cta": "Bắt đầu ngay",
-        "features": {
-            "feature1": "Tính năng 1",
-            "feature2": "Tính năng 2",
-            "feature3": "Tính năng 3"
-        }
+        "exploreDestinations": "Khám phá những địa điểm nổi bật nhất của Việt Nam"
     },
     "Homepage": {
         "welcome": "Chào mừng đến với trang web của chúng tôi",
@@ -115,6 +107,29 @@
         "locationManagement": "Quản lý địa điểm",
         "adminPanel": "Bảng điều khiển quản trị",
         "locations": "Địa điểm",
-        "logout": "Đăng xuất"
+        "logout": "Đăng xuất",
+        "addLocation": "Thêm địa điểm",
+        "editLocation": "Chỉnh sửa địa điểm",
+        "category": "Danh mục",
+        "province": "Tỉnh/Thành phố",
+        "district": "Quận/Huyện",
+        "latitude": "Vĩ độ",
+        "longitude": "Kinh độ",
+        "description": "Mô tả",
+        "images": "Hình ảnh",
+        "actions": "Thao tác",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "noLocations": "Không tìm thấy địa điểm nào",
+        "backToList": "Quay lại danh sách",
+        "selectCategory": "Chọn danh mục",
+        "selectProvince": "Chọn tỉnh/thành phố",
+        "confirmDelete": "Bạn có chắc chắn muốn xóa địa điểm này?",
+        "locationUpdated": "Cập nhật địa điểm thành công!",
+        "createLocation": "Tạo địa điểm",
+        "creating": "Đang tạo...",
+        "locationCreated": "Tạo địa điểm thành công!",
+        "enterDescription": "Nhập mô tả địa điểm...",
+        "coverImage": "Ảnh bìa"
     }
 }

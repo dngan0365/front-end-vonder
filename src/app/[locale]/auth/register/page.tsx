@@ -25,6 +25,9 @@ export default function Register() {
       router.push('/');
     }
   }, [isAuthenticated, router]);
+  const handleGoogleLogin = async () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,10 +151,10 @@ export default function Register() {
 
           <div className="mt-6">
             <button
-              onClick={handleGoogleRegister}
+              onClick={handleGoogleLogin}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <Image src="/google-logo.svg" alt="Google logo" width={20} height={20} className="mr-2" />
+              <Image src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google logo" width={20} height={20} className="mr-2" />
               {t('continueWithGoogle')}
             </button>
           </div>
