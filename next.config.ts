@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ppr: 'incremental',
   },
   images: {
-    domains: ['cdn-icons-png.flaticon.com'],
+    domains: ['cdn-icons-png.flaticon.com', 'res.cloudinary.com'],
   },
   eslint: {
     ignoreDuringBuilds: true,

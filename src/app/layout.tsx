@@ -1,6 +1,7 @@
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { getMessages } from "next-intl/server";
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['vietnamese'],
@@ -13,6 +14,20 @@ const roboto = Roboto({
   weight: ["400", "500", "700"],
   display: "swap",
 });
+
+type GenerateMetadataProps = {
+  params: { locale: string }
+}
+
+export async function generateMetadata(
+  props: GenerateMetadataProps
+): Promise<{ title: string }> {
+  const messages = await getMessages({locale: props.params.locale});
+  const title = messages?.HomePage?.title || 'Vietnam Tours';
+  return {
+    title
+  };
+}
 
 export default function RootLayout({
   children,

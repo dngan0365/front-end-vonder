@@ -1,8 +1,8 @@
 {
     "NavbarLinks": {
-        "home": "Home",
-        "about": "About",
-        "contact": "Contact",
+        "Places": "Places to go",
+        "Things": "Things to do",
+        "Forum": "Forum",
         "services": "Services",
         "blog": "Blog",
         "portfolio": "Portfolio",
@@ -12,15 +12,7 @@
         "profile": "Profile"
     },
     "HomePage": {
-        "welcome": "Welcome to Our Website",
-        "about": "About",
-        "intro": "We are glad to have you here. Explore our services and offerings.",
-        "cta": "Get Started",
-        "features": {
-            "feature1": "Feature 1",
-            "feature2": "Feature 2",
-            "feature3": "Feature 3"
-        }
+        "exploreDestinations": "Explore Most Popular Destinations Of Vietnam"
     },
     "Homepage": {
         "welcome": "Welcome to Our Website",
@@ -103,6 +95,29 @@
         "locationManagement": "Location Management",
         "adminPanel": "Admin Panel",
         "locations": "Locations",
-        "logout": "Logout"
+        "logout": "Logout",
+        "addLocation": "Add Location",
+        "editLocation": "Edit Location",
+        "category": "Category",
+        "province": "Province",
+        "district": "District",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "description": "Description",
+        "images": "Images",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "noLocations": "No locations found",
+        "backToList": "Back to list",
+        "selectCategory": "Select a category",
+        "selectProvince": "Select a province",
+        "confirmDelete": "Are you sure you want to delete this location?",
+        "locationUpdated": "Location updated successfully!",
+        "createLocation": "Create Location",
+        "creating": "Creating...",
+        "locationCreated": "Location created successfully!",
+        "enterDescription": "Enter location description...",
+        "coverImage": "Cover Image"
     }
 }

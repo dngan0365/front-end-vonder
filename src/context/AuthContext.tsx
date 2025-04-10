@@ -55,6 +55,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  // Function to retrieve user profile from localStorage
+  const fetchUserProfile = async (): Promise<User | null> => {
+    // Just return null if we can't find user data
+    // This function doesn't make an API call since we're handling user data during login
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+    return null;
+  };
+
   // Check if user is logged in when component mounts
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -72,17 +83,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               const userData = JSON.parse(storedUser);
               setUser(userData);
             } else {
-              // If you have an API endpoint to fetch user data, use it here
-              // const userProfile = await fetchUserProfile();
-              // setUser(userProfile);
-              
-              // For now, let's create a placeholder user until you implement the API
-              setUser({
-                id: 1,
-                email: 'user@example.com',
-                name: 'Test User',
-                role: 'USER',
-              });
+              const userProfile = await fetchUserProfile();
+              setUser(userProfile);
             }
           } catch (userError) {
             console.error('Error loading user data:', userError);
