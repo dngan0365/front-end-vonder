@@ -8,7 +8,6 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
-    ppr: 'incremental',
   },
   images: {
     domains: ['cdn-icons-png.flaticon.com', 'res.cloudinary.com'],
