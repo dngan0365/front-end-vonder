@@ -11,6 +11,12 @@
         "login": "Log In",
         "profile": "Profile"
     },
+    "Footer": {
+        "rights": "All rights reserved",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Use",
+        "contact": "Contact Us"
+    },
     "HomePage": {
         "exploreDestinations": "Explore Most Popular Destinations Of Vietnam"
     },

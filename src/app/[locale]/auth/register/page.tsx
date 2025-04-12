@@ -15,7 +15,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  
+
   // Use the auth context
   const { register, loading, error, isAuthenticated, clearError } = useAuth();
 
@@ -33,18 +33,26 @@ export default function Register() {
     e.preventDefault();
     clearError();
     setPasswordError('');
-    
+
     if (password !== confirmPassword) {
       setPasswordError(t('passwordsDontMatch'));
       return;
     }
-    
+
+    console.log('📤 Submitting registration form:', {
+      name,
+      email,
+      password,
+      confirmPassword,
+    });
+
     await register(email, name, password);
+ 
   };
 
-  const handleGoogleRegister = async () => {
-    window.location.href = '/api/auth/google';
-  };
+  // const handleGoogleRegister = async () => {
+  //   window.location.href = '/api/auth/google';
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -54,13 +62,13 @@ export default function Register() {
             {t('createAccount')}
           </h2>
         </div>
-        
+
         {(error || passwordError) && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
             <p className="text-red-700">{error || passwordError}</p>
           </div>
         )}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleRegister}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>

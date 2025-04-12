@@ -71,10 +71,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuthStatus = async () => {
       try {
         const loggedIn = isLoggedIn();
-        
         if (loggedIn) {
           setIsAuthenticated(true);
-          
           // Fetch user profile from localStorage or your API
           try {
             // Check if we have user data in localStorage
@@ -141,6 +139,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
+
   };
 
   // Logout function
