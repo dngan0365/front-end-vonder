@@ -41,7 +41,13 @@
         "logout": "Log Out",
         "authRequired": "Authentication Required",
         "pleaseLogin": "Please log in to view your profile",
-        "goToLogin": "Go to Login"
+        "goToLogin": "Go to Login",
+        "favorites": "My Favorite Locations",
+        "noFavorites": "You haven't added any locations to your favorites yet",
+        "removeFavorite": "Remove",
+        "viewDetails": "View Details",
+        "loadingFavorites": "Loading your favorite locations...",
+        "errorLoadingFavorites": "Error loading favorites"
     },
     "ContactPage": {
         "title": "Contact Us",
@@ -111,7 +117,6 @@
         "noLocations": "No locations found",
         "backToList": "Back to list",
         "selectCategory": "Select a category",
-        "selectProvince": "Select a province",
         "confirmDelete": "Are you sure you want to delete this location?",
         "locationUpdated": "Location updated successfully!",
         "createLocation": "Create Location",
@@ -119,5 +124,31 @@
         "locationCreated": "Location created successfully!",
         "enterDescription": "Enter location description...",
         "coverImage": "Cover Image"
+    },
+    "Forum": {
+        "createPost": "Create New Post",
+        "backToList": "Back to Forum",
+        "title": "Title",
+        "content": "Content",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "creating": "Creating...",
+        "created": "Post created successfully!",
+        "loading": "Loading post...",
+        "postNotFound": "Post not found",
+        "errorLoading": "Failed to load post",
+        "delete": "Delete",
+        "edit": "Edit",
+        "vote": "Vote",
+        "comments": "Comments",
+        "writeComment": "Write a comment...",
+        "reply": "Reply",
+        "locations": "Locations",
+        "searchLocations": "Search for locations",
+        "cancel": "Cancel"
+    },
+    "LocationDetail": {
+        "removeFromFavorites": "Favorited",
+        "addToFavorites": "Favorite"
     }
 }

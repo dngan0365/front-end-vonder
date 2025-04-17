@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 interface AuthResponse {
   token: string;
   user: {
-    id: number;
+    id: string;
     email: string;
     name: string;
     role: string;

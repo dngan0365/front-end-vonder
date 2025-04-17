@@ -53,7 +53,13 @@
         "logout": "Đăng xuất",
         "authRequired": "Yêu cầu xác thực",
         "pleaseLogin": "Vui lòng đăng nhập để xem hồ sơ của bạn",
-        "goToLogin": "Đi đến trang đăng nhập"
+        "goToLogin": "Đi đến trang đăng nhập",
+        "favorites": "Địa điểm yêu thích của tôi",
+        "noFavorites": "Bạn chưa thêm địa điểm nào vào danh sách yêu thích",
+        "removeFavorite": "Xóa",
+        "viewDetails": "Xem chi tiết",
+        "loadingFavorites": "Đang tải địa điểm yêu thích...",
+        "errorLoadingFavorites": "Lỗi khi tải danh sách địa điểm yêu thích"
     },
     "ContactPage": {
         "title": "Liên hệ với chúng tôi",
@@ -131,5 +137,31 @@
         "locationCreated": "Tạo địa điểm thành công!",
         "enterDescription": "Nhập mô tả địa điểm...",
         "coverImage": "Ảnh bìa"
+    },
+    "Forum": {
+        "createPost": "Tạo bài viết mới",
+        "backToList": "Quay lại diễn đàn",
+        "title": "Tiêu đề",
+        "content": "Nội dung",
+        "category": "Danh mục",
+        "selectCategory": "Chọn danh mục",
+        "creating": "Đang tạo bài viết...",
+        "created": "Tạo bài viết thành công!",
+        "loading": "Đang tải bài viết...",
+        "postNotFound": "Không tìm thấy bài viết",
+        "errorLoading": "Lỗi khi tải bài viết",
+        "delete": "Xóa",
+        "edit": "Sửa",
+        "vote": "Bình chọn",
+        "comments": "Bình luận",
+        "writeComment": "Viết bình luận...",
+        "reply": "Trả lời",
+        "locations": "Địa điểm",
+        "searchLocations": "Tìm kiếm địa điểm",
+        "cancel": "Hủy"
+    },
+    "LocationDetail": {
+        "removeFromFavorites": "Đã yêu thích",
+        "addToFavorites": "Yêu thích"
     }
 }

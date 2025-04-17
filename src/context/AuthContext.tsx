@@ -4,7 +4,7 @@ import { login as apiLogin, register as apiRegister, logout as apiLogout, isLogg
 
 // Interface for the user object
 interface User {
-  id: number;
+  id: string;
   email: string;
   name: string;
   role: string;
