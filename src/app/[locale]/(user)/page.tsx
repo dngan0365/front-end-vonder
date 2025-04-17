@@ -1,5 +1,6 @@
-import HomeClient from './_components/HomeClient';
+// import HomeClient from './_components/HomeClient';
+import { redirect } from 'next/navigation';
 
 export default function HomePage({ params }: { params: { locale: string } }) {
-  return <HomeClient />;
+  redirect('/');
 }
