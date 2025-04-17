@@ -144,7 +144,7 @@ export default function HomePage() {
     <TravelTips/>
     <MustSeeSites/>
     <EvenList/>
-      <Footer/>
+    <Footer/>
     </>
   );
 }
