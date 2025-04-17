@@ -1,11 +1,9 @@
 "use client";
-import {useTranslations} from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getAllLocations, Location } from '@/api/location';
 import LocationItem from '@/components/LocationItem';
 
 export default function Home() {
-  const t = useTranslations('HomePage');
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +35,7 @@ export default function Home() {
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <h2 className="text-xl font-semibold mb-6">
-        {t('exploreDestinations')}
+        Explore Location
       </h2>
       
       {loading ? (
