@@ -4,17 +4,21 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useRef } from "react";
 
 export function AuthRefresher() {
-  const { refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
   const hasRefreshed = useRef(false);
 
   useEffect(() => {
-    // Only refresh once when component mounts
-    if (!hasRefreshed.current) {
-      refreshUser();
-      hasRefreshed.current = true;
-    }
-    // No dependencies array means this only runs once on mount
-  }, []);
+    // Function to handle user refresh
+    const handleRefresh = async () => {
+      if (!hasRefreshed.current) {
+        const refreshedUser = await refreshUser();
+        console.log("AuthRefresher: User refreshed", refreshedUser);
+        hasRefreshed.current = true;
+      }
+    };
+    
+    handleRefresh();
+  }, [refreshUser]); // Include refreshUser in dependencies
 
   return null; // This component doesn't render anything
 }

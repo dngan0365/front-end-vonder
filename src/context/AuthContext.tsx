@@ -113,6 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.user) {
         localStorage.setItem('user', JSON.stringify(response.user));
       }
+      console.log('Login response:', response.user);
       
       setIsAuthenticated(true);
     } catch (err: unknown) {

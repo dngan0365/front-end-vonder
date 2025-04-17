@@ -50,7 +50,6 @@ export const register = async (email: string, name: string, password: string): P
       password
     });
     
-    console.log('Registration response:', response); 
     // Save token to localStorage for future requests
     localStorage.setItem('auth_token', response.data.token);
     

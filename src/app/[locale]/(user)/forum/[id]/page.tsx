@@ -74,7 +74,6 @@ export default function BlogPostDetail() {
         try {
           const { type } = await getUserVote(blogId, userId);
           setUserVote(type);
-          console.log('User vote fetched:', type);
         } catch (err) {
           console.error('Error fetching user vote:', err);
         } finally {

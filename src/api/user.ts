@@ -5,6 +5,16 @@ export interface UpdateUserProfileData {
   image?: string;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  image: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
 export const updateUserProfile = async (userId: string, data: UpdateUserProfileData): Promise<{ 
   success: boolean; 
   data?: any; 
@@ -45,7 +55,6 @@ export const getUserProfile = async (userId: string): Promise<{
 }> => {
   try {
     const response = await axiosInstance.get(`users/${userId}`);
-    console.log('User profile response:', response.data);
     
     // Update user data in localStorage with fresh data from server
     try {
@@ -67,3 +76,23 @@ export const getUserProfile = async (userId: string): Promise<{
     };
   }
 };
+
+export const getAllUsers = async (): Promise<{
+  success: boolean;
+  data?: any;
+  error?: string;
+}> => {
+  try {
+    const response = await axiosInstance.get('users');
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error getting all users:', error);
+    return {
+      success: false,
+      error: 'Failed to get users'
+    };
+  }
+}

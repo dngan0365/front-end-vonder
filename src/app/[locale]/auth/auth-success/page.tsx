@@ -36,6 +36,7 @@ export default function AuthSuccess() {
         // Extract user email ID first - these should always be present
         const id = payload.sub || '';
         const email = payload.email || '';
+        const image = payload.image || '';
         
         // For the name, we have a few fallback strategies
         let name = '';
@@ -61,7 +62,8 @@ export default function AuthSuccess() {
           id,
           email,
           name,
-          role: payload.role || 'user'
+          role: payload.role || 'user',
+          image
         };
         
         console.log('Constructed user object:', user);

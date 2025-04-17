@@ -14,13 +14,11 @@ export const uploadImage = async (file: File): Promise<{ success: boolean; url?:
       },
     });
 
-    console.log('Upload response structure:', JSON.stringify(response.data));
 
     // Ensure response structure matches what the TinyMCE editor expects
     if (response && response.data) {
       // Primary case: Server returns an array of string URLs
       if (Array.isArray(response.data) && response.data.length > 0 && typeof response.data[0] === 'string') {
-        console.log('Successfully parsed array of string URLs response');
         return {
           success: true,
           url: response.data[0]

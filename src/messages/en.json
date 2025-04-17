@@ -50,7 +50,19 @@
         "errorLoadingFavorites": "Error loading favorites",
         "changeProfilePhoto": "Change Profile Photo",
         "uploading": "Uploading...",
-        "uploadError": "Error uploading image"
+        "uploadError": "Error uploading image",
+        "profileTab": "Profile",
+        "favoritesTab": "Favorites",
+        "tripsTab": "Trips",
+        "trips": "My Trips",
+        "noTrips": "You haven't created any trips yet",
+        "loadingTrips": "Loading your trips...",
+        "errorLoadingTrips": "Error loading trips",
+        "tripDetails": "Trip Details",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "createNewTrip": "Create New Trip",
+        "createFirstTrip": "Create Your First Trip"
     },
     "ContactPage": {
         "title": "Contact Us",
@@ -153,5 +165,31 @@
     "LocationDetail": {
         "removeFromFavorites": "Favorited",
         "addToFavorites": "Favorite"
+    },
+    "Trip": {
+        "tripDetails": "Trip Details",
+        "tripNotFound": "Trip Not Found",
+        "tripLoadError": "Failed to load trip details",
+        "backToTrips": "Back to Trips",
+        "unnamedTrip": "Unnamed Trip",
+        "edit": "Edit",
+        "delete": "Delete",
+        "dates": "Dates",
+        "location": "Location",
+        "unknownLocation": "Unknown Location",
+        "accommodation": "Accommodation",
+        "participants": "Participants",
+        "people": "people",
+        "description": "Description",
+        "locationDetails": "Location Details",
+        "viewFullLocationDetails": "View full location details",
+        "joinTrip": "Join Trip",
+        "leaveTrip": "Leave Trip",
+        "unnamed": "Unnamed",
+        "noParticipants": "No participants yet",
+        "confirmDelete": "Confirm Delete",
+        "deleteWarning": "Are you sure you want to delete this trip? This action cannot be undone.",
+        "cancel": "Cancel",
+        "deleteTripError": "Failed to delete trip. Please try again."
     }
 }

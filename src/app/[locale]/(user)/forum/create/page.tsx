@@ -79,7 +79,6 @@ export default function CreateForumPost() {
       };
 
       const response = await createBlog(userId, blogDataToSubmit);
-      console.log('Blog creation response:', response);
       if (response.statusCode && response.statusCode !== 201) {
         setError(response.message || 'Error creating blog post');
         toast.error(response.message || 'Error creating blog post');

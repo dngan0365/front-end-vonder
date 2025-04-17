@@ -62,7 +62,19 @@
         "errorLoadingFavorites": "Lỗi khi tải danh sách địa điểm yêu thích",
         "changeProfilePhoto": "Thay đổi ảnh đại diện",
         "uploading": "Đang tải lên...",
-        "uploadError": "Lỗi khi tải lên ảnh"
+        "uploadError": "Lỗi khi tải lên ảnh",
+        "profileTab": "Hồ sơ",
+        "favoritesTab": "Yêu thích",
+        "tripsTab": "Chuyến đi",
+        "trips": "Chuyến đi của tôi",
+        "noTrips": "Bạn chưa tạo chuyến đi nào",
+        "loadingTrips": "Đang tải chuyến đi...",
+        "errorLoadingTrips": "Lỗi khi tải chuyến đi",
+        "tripDetails": "Chi tiết chuyến đi",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "createNewTrip": "Tạo chuyến đi mới",
+        "createFirstTrip": "Tạo chuyến đi đầu tiên"
     },
     "ContactPage": {
         "title": "Liên hệ với chúng tôi",
@@ -166,5 +178,31 @@
     "LocationDetail": {
         "removeFromFavorites": "Đã yêu thích",
         "addToFavorites": "Yêu thích"
+    },
+    "Trip": {
+        "tripDetails": "Chi tiết chuyến đi",
+        "tripNotFound": "Không tìm thấy chuyến đi",
+        "tripLoadError": "Không thể tải thông tin chuyến đi",
+        "backToTrips": "Quay lại danh sách chuyến đi",
+        "unnamedTrip": "Chuyến đi chưa đặt tên",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "dates": "Ngày",
+        "location": "Địa điểm",
+        "unknownLocation": "Địa điểm không xác định",
+        "accommodation": "Chỗ ở",
+        "participants": "Người tham gia",
+        "people": "người",
+        "description": "Mô tả",
+        "locationDetails": "Chi tiết địa điểm",
+        "viewFullLocationDetails": "Xem đầy đủ chi tiết địa điểm",
+        "joinTrip": "Tham gia chuyến đi",
+        "leaveTrip": "Rời khỏi chuyến đi",
+        "unnamed": "Chưa đặt tên",
+        "noParticipants": "Chưa có người tham gia",
+        "confirmDelete": "Xác nhận xóa",
+        "deleteWarning": "Bạn có chắc chắn muốn xóa chuyến đi này? Hành động này không thể hoàn tác.",
+        "cancel": "Hủy",
+        "deleteTripError": "Không thể xóa chuyến đi. Vui lòng thử lại."
     }
 }

@@ -28,7 +28,7 @@ export default async function LocaleLayout({
   return (
     <>
       <AuthRedirect />
-      <AuthRefresher /> {/* Add the client component for auth refresh */}
+      {/* Add the client component for auth refresh */}
       <html lang={locale}>
         <body>
           <NextIntlClientProvider>

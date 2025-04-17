@@ -3,6 +3,7 @@ import { Facebook, Mail, MapPin, Share2, Tag, Twitter } from "lucide-react"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import FavoriteButton from "@/components/FavoriteButton"
+import Link from "next/link"
 
 export default async function LocationDetailPage({
   params,
@@ -118,9 +119,11 @@ export default async function LocationDetailPage({
                 This is a popular {location.category.toLowerCase()} destination in {location.province}. Plan your visit
                 to experience the natural beauty and cultural significance of this location.
               </p>
-              <button className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition-colors">
-                Plan Your Visit
-              </button>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link href={`/trip/create?locationId=${location.id}&locationName=${encodeURIComponent(location.name)}`} className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition-colors">
+                  Plan Your Visit
+                </Link>
+              </div>
             </div>
           </div>
         </div>

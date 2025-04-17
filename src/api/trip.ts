@@ -1,4 +1,6 @@
 import axiosInstance from './axiosInstance';
+import { Location } from './location';
+import { User } from './user';
 
 // Trip interfaces based on Prisma schema
 export interface Trip {
@@ -25,18 +27,6 @@ export interface TripParticipant {
   user?: User;
 }
 
-interface Location {
-  id: string;
-  name: string;
-  // Add other location properties as needed
-}
-
-interface User {
-  id: string;
-  name: string;
-  // Add other user properties as needed
-}
-
 // API functions for trips
 
 /**
@@ -50,7 +40,7 @@ export const getAllTrips = async (params?: {
   endDate?: string;
 }): Promise<Trip[]> => {
   try {
-    const response = await axiosInstance.get('/trips', { params });
+    const response = await axiosInstance.get('trips', { params });
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch trips: ${error}`);
@@ -62,7 +52,7 @@ export const getAllTrips = async (params?: {
  */
 export const getTripById = async (id: string): Promise<Trip> => {
   try {
-    const response = await axiosInstance.get(`/trips/${id}`);
+    const response = await axiosInstance.get(`trips/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch trip: ${error}`);
@@ -74,7 +64,7 @@ export const getTripById = async (id: string): Promise<Trip> => {
  */
 export const createTrip = async (tripData: Omit<Trip, 'id'>): Promise<Trip> => {
   try {
-    const response = await axiosInstance.post('/trips', tripData);
+    const response = await axiosInstance.post('trips', tripData);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to create trip: ${error}`);
@@ -86,7 +76,7 @@ export const createTrip = async (tripData: Omit<Trip, 'id'>): Promise<Trip> => {
  */
 export const updateTrip = async (id: string, tripData: Partial<Trip>): Promise<Trip> => {
   try {
-    const response = await axiosInstance.patch(`/trips/${id}`, tripData);
+    const response = await axiosInstance.patch(`trips/${id}`, tripData);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to update trip: ${error}`);
@@ -98,7 +88,7 @@ export const updateTrip = async (id: string, tripData: Partial<Trip>): Promise<T
  */
 export const deleteTrip = async (id: string): Promise<void> => {
   try {
-    await axiosInstance.delete(`/trips/${id}`);
+    await axiosInstance.delete(`trips/${id}`);
   } catch (error) {
     throw new Error(`Failed to delete trip: ${error}`);
   }
@@ -109,7 +99,7 @@ export const deleteTrip = async (id: string): Promise<void> => {
  */
 export const addParticipant = async (tripId: string, userId: string): Promise<TripParticipant> => {
   try {
-    const response = await axiosInstance.post(`/trips/${tripId}/participants`, { userId });
+    const response = await axiosInstance.post(`trips/${tripId}/participants`, { userId });
     return response.data;
   } catch (error) {
     throw new Error(`Failed to add participant: ${error}`);
@@ -121,7 +111,7 @@ export const addParticipant = async (tripId: string, userId: string): Promise<Tr
  */
 export const removeParticipant = async (tripId: string, userId: string): Promise<void> => {
   try {
-    await axiosInstance.delete(`/trips/${tripId}/participants/${userId}`);
+    await axiosInstance.delete(`trips/${tripId}/participants/${userId}`);
   } catch (error) {
     throw new Error(`Failed to remove participant: ${error}`);
   }
@@ -132,7 +122,7 @@ export const removeParticipant = async (tripId: string, userId: string): Promise
  */
 export const getTripParticipants = async (tripId: string): Promise<TripParticipant[]> => {
   try {
-    const response = await axiosInstance.get(`/trips/${tripId}/participants`);
+    const response = await axiosInstance.get(`trips/${tripId}/participants`);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch trip participants: ${error}`);
@@ -144,7 +134,7 @@ export const getTripParticipants = async (tripId: string): Promise<TripParticipa
  */
 export const getUserTrips = async (userId: string): Promise<Trip[]> => {
   try {
-    const response = await axiosInstance.get(`/trips/user/${userId}`);
+    const response = await axiosInstance.get(`trips/user/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch user trips: ${error}`);
