@@ -1,5 +1,5 @@
 {
-    "Navbar": {
+    "NavbarLinks": {
         "Places": "Điểm đến",
         "Things": "Hoạt động",
         "Forum": "Diễn đàn",
@@ -8,9 +8,16 @@
         "services": "Dịch vụ",
         "portfolio": "Danh mục đầu tư",
         "testimonials": "Nhận xét",
-        "faq": "Câu hỏi thường gặp"
+        "faq": "Câu hỏi thường gặp",
+        "login": "Dang nhập"
     },
-    "NavbarLinks": {
+    "Footer": {
+        "rights": "Bản quyền thuộc về",
+        "privacy": "Chính sách bảo mật",
+        "terms": "Điều khoản sử dụng",
+        "contact": "Liên hệ"
+    },
+    "Home": {
         "home": "Trang chủ",
         "about": "Giới thiệu",
         "contact": "Liên hệ",

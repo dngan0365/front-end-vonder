@@ -1,0 +1,24 @@
+/* Custom extended styles */
+.timeline-dot {
+    @apply w-4 h-4 rounded-full z-10 transition-all duration-300;
+  }
+  
+  .timeline-dot-active {
+    @apply bg-cyan-400 border-2 border-white transform scale-125;
+  }
+  
+  .timeline-dot-inactive {
+    @apply bg-white border-2 border-cyan-200;
+  }
+  
+  .month-button {
+    @apply rounded-lg px-4 py-2 transition-colors;
+  }
+  
+  .month-button-active {
+    @apply bg-cyan-400 text-white;
+  }
+  
+  .month-button-inactive {
+    @apply bg-cyan-300 text-white hover:bg-cyan-400;
+  }
