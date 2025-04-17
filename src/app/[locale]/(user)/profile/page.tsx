@@ -7,15 +7,22 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { uploadImage } from "@/api/upload";
+import { updateUserProfile } from "@/api/user";
 
 export default function ProfilePage({ params }: { params: Promise<{ locale: string }> | { locale: string } }) {
-  const { user, logout, isAuthenticated, loading } = useAuth();
+  const { user, logout, isAuthenticated, loading, refreshUser, updateUser } = useAuth();
   const { favorites, loading: favoritesLoading, error: favoritesError, removeFavorite, refreshFavorites } = useFavorites();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const hasLoggedFavoritesInfo = useRef(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  let profileText, accountDetailsText, logoutText, authRequiredText, pleaseLoginText, goToLoginText, favoritesText, noFavoritesText, removeFavoriteText, viewDetailsText, loadingFavoritesText, errorLoadingFavoritesText;
+  let profileText, accountDetailsText, logoutText, authRequiredText, pleaseLoginText, goToLoginText, 
+    favoritesText, noFavoritesText, removeFavoriteText, viewDetailsText, loadingFavoritesText, 
+    errorLoadingFavoritesText, changeProfilePhotoText, uploadingText, uploadErrorText;
 
   try {
     const t = useTranslations("Profile");
@@ -31,6 +38,9 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     viewDetailsText = t("viewDetails");
     loadingFavoritesText = t("loadingFavorites");
     errorLoadingFavoritesText = t("errorLoadingFavorites");
+    changeProfilePhotoText = t("changeProfilePhoto") || "Change Profile Photo";
+    uploadingText = t("uploading") || "Uploading...";
+    uploadErrorText = t("uploadError") || "Error uploading image";
   } catch (e) {
     console.error("Translation error:", e);
     profileText = "User Profile";
@@ -45,6 +55,9 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     viewDetailsText = "View Details";
     loadingFavoritesText = "Loading your favorite locations...";
     errorLoadingFavoritesText = "Error loading favorites";
+    changeProfilePhotoText = "Change Profile Photo";
+    uploadingText = "Uploading...";
+    uploadErrorText = "Error uploading image";
   }
 
   useEffect(() => {
@@ -67,6 +80,57 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
   const handleLogout = () => {
     logout();
     router.push(`/`);
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setIsUploading(true);
+    setUploadError("");
+
+    try {
+      // Upload the image
+      const uploadResponse = await uploadImage(file);
+      console.log("Upload response:", uploadResponse);
+      
+      if (!uploadResponse.success || !uploadResponse.url) {
+        throw new Error(uploadResponse.error || "Failed to upload image");
+      }
+
+      // Update the user profile with the new image URL
+      const updateResponse = await updateUserProfile(user.id, { 
+        image: uploadResponse.url 
+      });
+
+      console.log("Update response:", updateResponse);
+
+      if (!updateResponse.success) {
+        throw new Error(updateResponse.error || "Failed to update profile");
+      }
+
+      // Update the user in context immediately for a better UX
+      updateUser({ image: uploadResponse.url });
+      
+      // Also refresh the user data to ensure all data is in sync
+      await refreshUser();
+      
+    } catch (error) {
+      console.error("Error during image upload:", error);
+      setUploadError(error instanceof Error ? error.message : "Unknown error occurred");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    console.log("New name:", newName);
+    // You can implement saving this when the input loses focus
   };
 
   useEffect(() => {
@@ -102,6 +166,8 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     );
   }
 
+  console.log("User Profile:", user);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4">
@@ -111,14 +177,70 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
           </div>
 
           <div className="mt-6">
-            <div className="flex items-center mb-4">
-              <div className="bg-gray-100 rounded-full p-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+            <div className="flex flex-col items-center mb-6">
+              <div className="relative mb-4">
+                <div className="h-24 w-24 rounded-full overflow-hidden bg-gray-100 relative">
+                  {isUploading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                    </div>
+                  ) : user.image ? (
+                    <Image
+                      src={user.image}
+                      alt={user.name}
+                      fill
+                      sizes="96px"
+                      style={{ objectFit: 'cover' }}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full w-full bg-gray-100">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
               </div>
-              <div className="ml-4">
-                <h2 className="text-lg font-semibold">{user.name}</h2>
+              {uploadError && (
+                <p className="text-red-500 text-sm mb-2">{`${uploadErrorText}: ${uploadError}`}</p>
+              )}
+              <button
+                onClick={triggerFileInput}
+                disabled={isUploading}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2"
+              >
+                {isUploading ? (
+                  <>
+                    <div className="h-4 w-4 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+                    {uploadingText}
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    {changeProfilePhotoText}
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="flex items-center mb-4">
+              <div>
+                <input
+                  type="text"
+                  value={user.name}
+                  onChange={handleNameChange}
+                  className="text-lg font-semibold border border-gray-300 rounded px-2 py-1"
+                />
                 <p className="text-gray-600">{user.email}</p>
               </div>
             </div>

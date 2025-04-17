@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAllLocations, Location } from '@/api/location';
 import LocationItem from '@/components/LocationItem';
 import { useFavorites } from '@/hooks/useFavorite';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
   const t = useTranslations('HomePage');
@@ -11,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {favorites} = useFavorites();
+  const {refreshUser} = useAuth();
 
   useEffect(() => {
     // Fetch locations and favorites

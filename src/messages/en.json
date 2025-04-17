@@ -47,7 +47,10 @@
         "removeFavorite": "Remove",
         "viewDetails": "View Details",
         "loadingFavorites": "Loading your favorite locations...",
-        "errorLoadingFavorites": "Error loading favorites"
+        "errorLoadingFavorites": "Error loading favorites",
+        "changeProfilePhoto": "Change Profile Photo",
+        "uploading": "Uploading...",
+        "uploadError": "Error uploading image"
     },
     "ContactPage": {
         "title": "Contact Us",

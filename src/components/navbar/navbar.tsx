@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Globe, Menu, X, Home, MapPin, MessageSquare, User } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 const Navbar = ({ locale }: { locale: string }) => {
   const t = useTranslations("NavbarLinks")
@@ -36,7 +37,7 @@ const Navbar = ({ locale }: { locale: string }) => {
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center pl-10">
           <Link
             href={`/${locale}/`}
             className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent"
@@ -94,7 +95,19 @@ const Navbar = ({ locale }: { locale: string }) => {
           {isAuthenticated ? (
             <Button variant="ghost" size="sm" className="flex items-center gap-2" asChild>
               <Link href={`/${locale}/profile`}>
-                <User className="h-4 w-4" />
+                {user?.image ? (
+                  <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                    <Image 
+                      src={user.image} 
+                      alt={user.name || "Profile"} 
+                      fill 
+                      sizes="24px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <User className="h-4 w-4" />
+                )}
                 <span className="hidden sm:inline">{user?.name || t("profile")}</span>
               </Link>
             </Button>

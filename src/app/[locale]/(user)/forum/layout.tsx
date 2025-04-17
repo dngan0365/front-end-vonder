@@ -32,7 +32,7 @@ export default function ForumLayout({
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className={`bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 h-screen flex flex-col ${isCollapsed ? 'w-16' : 'w-40'} transition-all duration-300`}>
+      <aside className={`bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 h-screen flex flex-col ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
           {!isCollapsed && <h2 className="text-xl font-bold">Forum</h2>}
           <button 

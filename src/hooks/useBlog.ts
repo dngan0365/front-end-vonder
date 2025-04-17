@@ -114,16 +114,15 @@ export const useBlog = (): UseBlogReturn => {
   const voteBlogPost = useCallback(async (blogId: string, userId: string, voteType: BlogVoteType) => {
     try {
       await voteBlog(blogId, userId, voteType);
-      // Refresh the blog to get updated vote counts
-      fetchBlogs();
-      if (blog && blog.id === blogId) {
-        fetchBlogById(blogId);
-      }
+      // Don't automatically refetch blog anymore to prevent reload
+      // We'll handle UI updates in the component directly
+      // Successfully voted, no return value needed
     } catch (err) {
       setError(`Failed to vote on blog with ID ${blogId}`);
       console.error(err);
+      throw err;
     }
-  }, [blog, fetchBlogs, fetchBlogById]);
+  }, []);
 
   const getVoteSummary = useCallback(async (blogId: string) => {
     try {

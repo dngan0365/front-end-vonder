@@ -59,7 +59,10 @@
         "removeFavorite": "Xóa",
         "viewDetails": "Xem chi tiết",
         "loadingFavorites": "Đang tải địa điểm yêu thích...",
-        "errorLoadingFavorites": "Lỗi khi tải danh sách địa điểm yêu thích"
+        "errorLoadingFavorites": "Lỗi khi tải danh sách địa điểm yêu thích",
+        "changeProfilePhoto": "Thay đổi ảnh đại diện",
+        "uploading": "Đang tải lên...",
+        "uploadError": "Lỗi khi tải lên ảnh"
     },
     "ContactPage": {
         "title": "Liên hệ với chúng tôi",

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { createBlog } from '@/api/forum';
 import { toast } from 'react-toastify';
-import data from '@/../data/data.json';
+import data from '@/data/data.json';
 import { useAuth } from '@/context/AuthContext';
 
 // Get categories and provinces from data.json
