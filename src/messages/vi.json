@@ -9,7 +9,9 @@
         "portfolio": "Danh mục đầu tư",
         "testimonials": "Nhận xét",
         "faq": "Câu hỏi thường gặp",
-        "login": "Dang nhập"
+        "login": "Đăng nhập",
+        "register": "Đăng kí",
+        "Map": "Bản đồ"
     },
     "Footer": {
         "rights": "Bản quyền thuộc về",
