@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { getAllLocations, Location } from '@/api/location';
 import LocationItem from '@/components/LocationItem';
 
-export default function Home() {
+export default function Home({ params }: { params: { locale: string } }) {
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
