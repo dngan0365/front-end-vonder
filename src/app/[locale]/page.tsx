@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Navbar from "../../components/navbar/navbar";
 import Footer from "@/components/footer/footer";
@@ -8,6 +8,9 @@ import CardRegion from '../../components/cardRegion/cardRegion';
 import TravelTips from '@/components/travelTips/travelTips';
 import MustSeeSites from '@/components/tour/tour';
 import EvenList from '@/components/eventlist/eventlist';
+import LocationItem from '@/components/LocationItem';
+import { getAllLocations, Location } from '@/app/api/location';
+import ChatBot from '@/components/chatbot/ChatBot';
 
 export default function HomePage() {
   const playerRef = useRef<any>(null);
@@ -84,6 +87,37 @@ export default function HomePage() {
     },
 
   ];
+  // File locations
+    const [locations, setLocations] = useState<Location[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+  
+    useEffect(() => {
+      // Fetch locations from the API or state management
+      const fetchLocations = async () => {
+        try {
+          setLoading(true);
+          const data = await getAllLocations();
+          console.log("Fetched data:", data);
+          
+          if (Array.isArray(data) && data.length > 0) {
+            setLocations(data);
+          } else {
+            console.warn("Data is not in expected format:", data);
+          }
+        } catch (error) {
+          console.error('Error fetching locations:', error);
+          setError('Failed to load locations');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchLocations();
+    }, []); 
+
+  // Chatbot
+  const [chatbotOpen, setChatbotOpen] = useState(false); // <- new state
 
 
   return (
@@ -113,7 +147,7 @@ export default function HomePage() {
             <button className="bg-[#4ad4e4] hover:bg-[#77DAE6] text-white font-medium py-3 px-6 rounded transition duration-300">
               Let's Explore
             </button>
-  </div>
+          </div>
           </div>
 
           {/* Right */}
@@ -144,6 +178,48 @@ export default function HomePage() {
     <TravelTips/>
     <MustSeeSites/>
     <EvenList/>
+    <div className="min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <h2 className="text-xl font-semibold mb-6">
+        Explore Location
+      </h2>
+      
+      {loading ? (
+        <div className="text-center py-10">
+          <p>Loading locations...</p>
+        </div>
+      ) : error ? (
+        <div className="text-red-500 py-10">
+          {error}
+        </div>
+      ) : locations && locations.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {locations.map((location) => (
+            <LocationItem key={location.id} location={location} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-10">
+          <h3 className="text-gray-800">No locations found</h3>
+        </div>
+      )}
+    </div>
+    <div className="relative">
+      {/* Floating chatbot window */}
+      {chatbotOpen && (
+        <div className="fixed bottom-24 right-6 w-80 h-[500px] bg-white shadow-2xl rounded-xl overflow-hidden z-50">
+          <ChatBot />
+        </div>
+      )}
+
+      {/* Floating button */}
+      <button
+        onClick={() => setChatbotOpen(prev => !prev)}
+        className="fixed bottom-6 right-6 bg-[#4ad4e4] hover:bg-[#77DAE6] text-white rounded-full p-4 shadow-lg z-40"
+      >
+        {chatbotOpen ? 'Close' : 'Chat'}
+      </button>
+    </div>
+
     <Footer/>
     </>
   );

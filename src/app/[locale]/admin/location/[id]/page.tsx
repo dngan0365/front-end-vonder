@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { getLocationById, updateLocation, Location } from '@/api/location';
+import { getLocationById, updateLocation, Location } from '@/app/api/location';
 import data from '@/../data/data.json';
 import ImageUploader from '@/components/ImageUploader';
 

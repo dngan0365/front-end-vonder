@@ -1,6 +1,6 @@
 "use client"
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { login as apiLogin, register as apiRegister, logout as apiLogout, isLoggedIn } from '@/api/auth';
+import { login as apiLogin, register as apiRegister, logout as apiLogout, isLoggedIn } from '@/app/api/auth';
 
 // Interface for the user object
 interface User {

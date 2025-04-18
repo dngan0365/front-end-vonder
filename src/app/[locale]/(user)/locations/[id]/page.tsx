@@ -1,4 +1,4 @@
-import { getLocationById } from "@/api/location"
+import { getLocationById } from "@/app/api/location"
 import { Facebook, Mail, MapPin, Navigation, Share2, Tag, Twitter } from "lucide-react"
 import Image from "next/image"
 import { notFound } from "next/navigation"
