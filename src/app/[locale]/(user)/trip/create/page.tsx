@@ -129,14 +129,14 @@ export default function CreateTripPage() {
           : [];
       
       // Add participants
-      await Promise.all(participantsToAdd.map(participant => 
+      const tripCreated = await Promise.all(participantsToAdd.map(participant => 
         addParticipant(newTrip.id, participant.id)
       ));
       
       toast.success('Trip created!')
       fetchTrips()
       
-      router.push('/trips') // Redirect to trips list page
+      router.push(`/profile`) // Redirect to trips list page
     } catch (error) {
       console.error('Failed to create trip:', error)
       

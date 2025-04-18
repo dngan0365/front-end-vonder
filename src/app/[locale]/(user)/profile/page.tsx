@@ -25,10 +25,8 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const t = useTranslations("Profile");
-  const [tripsLoaded, setTripsLoaded] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const isMounted = useRef(true);
-
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -40,31 +38,35 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     };
   }, []);
 
-  // Modify your useEffect for data loading
+    // Add this state near your other state declarations
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  // Change your trip loading effect
   useEffect(() => {
-    if (isClient && isAuthenticated && user && isMounted.current && !tripsLoaded) {
+    // Only load if authentication is ready and we haven't loaded yet
+    if (isClient && isAuthenticated && user && !isDataLoaded) {
       const loadUserTrips = async () => {
-        console.log("🔍 Loading trips for user:", user.id);
         try {
+          console.log("🔄 Loading user trips for", user.id);
           await fetchUserTrips(user.id);
-          setTripsLoaded(true);
+          
+          // Mark data as loaded only after the fetch completes
+          setIsDataLoaded(true);
         } catch (error) {
           console.error('❌ Error loading trips:', error);
-        } finally {
         }
       };
       
       loadUserTrips();
     }
-  }, [isClient, isAuthenticated, user?.id, tripsLoaded, fetchUserTrips]);
+  }, [isClient, isAuthenticated, user?.id, fetchUserTrips, isDataLoaded]);
 
-  // Separate effect for favorites
+  // Similarly update your favorites loading effect
   useEffect(() => {
-    if (isClient && isAuthenticated && user && isMounted.current && !dataLoaded) {
+    if (isClient && isAuthenticated && user && !isDataLoaded) {
       const loadFavorites = async () => {
         try {
           await refreshFavorites();
-          setDataLoaded(true);
         } catch (error) {
           console.error('❌ Error loading favorites:', error);
         }
@@ -72,13 +74,7 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
       
       loadFavorites();
     }
-  }, [isClient, isAuthenticated, user?.id, dataLoaded, refreshFavorites]);
-  // Add this effect to your ProfilePage component
-  useEffect(() => {
-    // This will log the current value of userTrips whenever it changes
-    console.log("userTrips updated:", userTrips);
-  }, [userTrips]);
-
+  }, [isClient, isAuthenticated, user?.id, refreshFavorites, isDataLoaded]);
 
   useEffect(() => {
     if (isClient && !loading && !isAuthenticated) {
@@ -126,8 +122,6 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
       setIsUploading(false);
     }
   };
-
-  console.log("user trip", userTrips);
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();

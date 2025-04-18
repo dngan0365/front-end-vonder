@@ -340,11 +340,14 @@ export default function TripDetailsPage() {
                     className="flex items-center p-4 bg-white border rounded-lg shadow-sm"
                   >
                     <div className="relative h-10 w-10 mr-3">
+                    <div className="relative h-10 w-10 mr-3 rounded-full overflow-hidden">
                       {participant.user?.image ? (
                         <Image
                           src={participant.user.image}
                           alt={participant.user?.name || t('participant')}
                           fill
+                          sizes="40px"
+                          priority
                           style={{ objectFit: 'cover' }}
                           className="rounded-full"
                         />
@@ -355,6 +358,7 @@ export default function TripDetailsPage() {
                           </span>
                         </div>
                       )}
+                    </div>
                     </div>
                     <div>
                       <p className="font-medium">
