@@ -3,10 +3,11 @@ import axiosInstance from './axiosInstance';
 interface AuthResponse {
   token: string;
   user: {
-    id: number;
+    id: string;
     email: string;
     name: string;
     role: string;
+    image: string;
   };
 }
 
@@ -49,7 +50,6 @@ export const register = async (email: string, name: string, password: string): P
       password
     });
     
-    console.log('Registration response:', response); 
     // Save token to localStorage for future requests
     localStorage.setItem('auth_token', response.data.token);
     
