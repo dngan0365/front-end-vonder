@@ -5,14 +5,14 @@ import Navbar from "@/components/navbar/navbar";
 import { useParams } from 'next/navigation';
 import { AuthRefresher } from '@/components/auth/AuthRefresher';
 
+
 export default function UserLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
-  const params = useParams();
-  const locale = params.locale as string;
-  
   return (
     <div>
       <AuthRefresher/>

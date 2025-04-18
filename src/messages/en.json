@@ -6,10 +6,18 @@
         "services": "Services",
         "blog": "Blog",
         "portfolio": "Portfolio",
+        "Map": "Map",
         "testimonials": "Testimonials",
         "faq": "FAQ",
         "login": "Log In",
-        "profile": "Profile"
+        "profile": "Profile",
+        "register": "Register"
+    },
+    "Footer": {
+        "rights": "All rights reserved",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Use",
+        "contact": "Contact Us"
     },
     "HomePage": {
         "exploreDestinations": "Explore Most Popular Destinations Of Vietnam"
@@ -77,7 +85,7 @@
         }
     },
     "Auth": {
-        "login": "Login",
+        "login": "Log In",
         "loggingIn": "Logging in...",
         "email": "Email",
         "password": "Password",
