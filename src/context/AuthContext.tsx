@@ -1,13 +1,14 @@
 "use client"
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { login as apiLogin, register as apiRegister, logout as apiLogout, isLoggedIn } from '@/app/api/auth';
+import { login as apiLogin, register as apiRegister, logout as apiLogout, isLoggedIn } from '@/api/auth';
 
 // Interface for the user object
 interface User {
-  id: number;
+  id: string;
   email: string;
   name: string;
   role: string;
+  image: string;
 }
 
 // Interface for the context value
@@ -20,6 +21,8 @@ interface AuthContextType {
   register: (email: string, name: string, password: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  refreshUser: () => Promise<User | null>;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 // Create the context with default values
@@ -32,6 +35,8 @@ const AuthContext = createContext<AuthContextType>({
   register: async () => {},
   logout: () => {},
   clearError: () => {},
+  refreshUser: async () => Promise.resolve(null),
+  updateUser: () => {},
 });
 
 // Props for AuthProvider component
@@ -57,8 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Function to retrieve user profile from localStorage
   const fetchUserProfile = async (): Promise<User | null> => {
-    // Just return null if we can't find user data
-    // This function doesn't make an API call since we're handling user data during login
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       return JSON.parse(storedUser);
@@ -73,9 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const loggedIn = isLoggedIn();
         if (loggedIn) {
           setIsAuthenticated(true);
-          // Fetch user profile from localStorage or your API
           try {
-            // Check if we have user data in localStorage
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
               const userData = JSON.parse(storedUser);
@@ -107,14 +108,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiLogin(email, password);
       setUser(response.user);
       
-      // Store user info in localStorage for persistence
       if (response.user) {
         localStorage.setItem('user', JSON.stringify(response.user));
       }
+      console.log('Login response:', response.user);
       
       setIsAuthenticated(true);
-    } catch (err: unknown) { // Change from any to unknown
-      const error = err as ApiError; // Type assertion
+    } catch (err: unknown) {
+      const error = err as ApiError;
       setError(error.response?.data?.message || error.message || 'Failed to login');
       console.error('Login error:', error);
     } finally {
@@ -129,11 +130,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     try {
       const response = await apiRegister(email, name, password);
-      console.log('Registration response:', response); // Debugging line
+      console.log('Registration response:', response);
       setUser(response.user);
       setIsAuthenticated(true);
-    } catch (err: unknown) { // Change from any to unknown
-      const error = err as ApiError; // Type assertion
+    } catch (err: unknown) {
+      const error = err as ApiError;
       setError(error.response?.data?.message || error.message || 'Failed to register');
       console.error('Registration error:', error);
     } finally {
@@ -147,12 +148,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     apiLogout();
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user'); // Clean up stored user data
+    localStorage.removeItem('user');
   };
 
   // Clear any auth errors
   const clearError = () => {
     setError(null);
+  };
+
+  // Function to refresh user data from local storage or API
+  const refreshUser = async (): Promise<User | null> => {
+    try {
+      const newUser = await fetchUserProfile();
+      if (newUser) {
+        const userData = newUser;
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+      return null;
+    }
+  };
+
+  // Function to update user data (used for profile updates)
+  const updateUser = (userData: Partial<User>) => {
+    if (!user) return;
+    
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   // Context value
@@ -165,6 +192,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     clearError,
+    refreshUser,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -182,4 +211,4 @@ export const useAuth = () => {
 };
 
 export default AuthContext;
-export type { User }
+export type { User };

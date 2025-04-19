@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { deleteLocation, getAllLocations } from '@/app/api/location';
-import type { Location } from '@/app/api/location';
+import { deleteLocation, getAllLocations } from '@/api/location';
+import type { Location } from '@/api/location';
 
 
 export default function AdminLocations() {

@@ -9,7 +9,7 @@ import TravelTips from '@/components/travelTips/travelTips';
 import MustSeeSites from '@/components/tour/tour';
 import EvenList from '@/components/eventlist/eventlist';
 import LocationItem from '@/components/LocationItem';
-import { getAllLocations, Location } from '@/app/api/location';
+import { getAllLocations, Location } from '@/api/location';
 import ChatBot from '@/components/chatbot/ChatBot';
 
 export default function HomePage() {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadImage } from '@/app/api/upload';
+import { uploadImage } from '@/api/upload';
 
 interface ImageUploaderProps {
   currentImage: string;

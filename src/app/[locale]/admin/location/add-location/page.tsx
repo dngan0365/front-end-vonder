@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { createLocation } from '@/app/api/location';
-import data from '@/../data/data.json';
+import { createLocation } from '@/api/location';
+import data from '@/data/data.json';
 import ImageUploader from '@/components/ImageUploader';
 
 // Get categories and provinces from data.json

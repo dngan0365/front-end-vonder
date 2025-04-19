@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import withLlamaIndex from "llamaindex/next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
@@ -18,4 +17,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(withLlamaIndex(nextConfig));
+export default withNextIntl(nextConfig);

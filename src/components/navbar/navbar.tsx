@@ -1,50 +1,32 @@
+
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useAuth } from '@/context/AuthContext';
-import { cn } from '@/lib/utils';
 import "@/app/globals.css";
+import { useTranslations } from "next-intl"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { useState } from "react"
+import { useAuth } from "@/context/AuthContext"
+import { cn } from "@/lib/utils"
+import { Atom, Globe, Menu, X, Home, MapPin, MessageSquare, User } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
-import {
-  Atom,
-  Globe,
-  Menu,
-  X,
-  Home,
-  MapPin,
-  MessageSquare,
-  User
-} from 'lucide-react';
+const Navbar = ({ locale }: { locale: string }) => {
+  const t = useTranslations("NavbarLinks")
+  const pathName = usePathname()
+  const router = useRouter()
+  const { isAuthenticated, user } = useAuth()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-
-import { Button } from '@/components/ui/button';
-import styles from './navbar.module.css';
-
-const Navbar = () => {
-  const t = useTranslations('NavbarLinks');
-  const pathname = usePathname();
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const locale = pathname.split('/')[1] || 'en';
-  const pathWithoutLocale = pathname.split('/').slice(2).join('/') || '';
+  const pathWithoutLocale = pathName.replace(`/${locale}`, '');
 
   const handleLanguageChange = (selectedLocale: string) => {
-    router.push(`/${selectedLocale}/${pathWithoutLocale}`);
+    router.push(`/${selectedLocale}${pathWithoutLocale}`);
   };
 
-  const isActive = (path: string) => pathname === `/${locale}${path}`;
+  const isActive = (path: string) => pathName === `/${locale}${path}`;
 
   const navLinks = [
     {
@@ -73,6 +55,7 @@ const Navbar = () => {
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 px-4 md:px-10 items-center justify-between">
         {/* Logo */}
+
         <Link
           href={`/${locale}/`}
           className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
@@ -85,7 +68,6 @@ const Navbar = () => {
           />
           <span className="text-xl font-semibold">Vonders</span>
         </Link>
-
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1 ">
           {navLinks.map((link) => (
@@ -135,7 +117,20 @@ const Navbar = () => {
           {isAuthenticated ? (
             <Button variant="ghost" size="sm" className="flex px-6 py-4 rounded-[50px] items-center gap-2" asChild>
               <Link href={`/${locale}/profile`}>
-                <User className="h-8 w-8" />
+                {user?.image ? (
+                  <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                    <Image 
+                      src={user.image} 
+                      alt={user.name || "Profile"} 
+                      fill 
+                      sizes="24px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <User className="h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">{user?.name || t("profile")}</span>
               </Link>
             </Button>
           ) : (

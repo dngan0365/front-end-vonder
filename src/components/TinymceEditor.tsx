@@ -1,6 +1,6 @@
 import { Editor } from '@tinymce/tinymce-react';
 import { useRef, useState } from 'react';
-import { uploadImage } from '../app/api/upload';
+import { uploadImage } from '../api/upload';
 
 interface TinyMCEEditorProps {
   value: string;
