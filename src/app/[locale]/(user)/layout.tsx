@@ -2,6 +2,9 @@
 
 import React from 'react';
 import Navbar from "@/components/navbar/navbar";
+import { useParams } from 'next/navigation';
+import { AuthRefresher } from '@/components/auth/AuthRefresher';
+
 
 export default function UserLayout({
   children,
@@ -12,7 +15,8 @@ export default function UserLayout({
 }) {
   return (
     <div>
-      <Navbar />
+      <AuthRefresher/>
+      <Navbar locale={locale} />
       <main>
         {children}
       </main>

@@ -1,7 +1,9 @@
 import { getLocationById } from "@/api/location"
-import { Facebook, Mail, MapPin, Navigation, Share2, Tag, Twitter } from "lucide-react"
+import { Facebook, Mail, MapPin, Share2, Tag, Twitter } from "lucide-react"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import FavoriteButton from "@/components/FavoriteButton"
+import Link from "next/link"
 
 export default async function LocationDetailPage({
   params,
@@ -32,17 +34,22 @@ export default async function LocationDetailPage({
 
         {/* Content section */}
         <div className="container mx-auto px-4 py-8 max-w-5xl">
-          {/* Location metadata */}
-          <div className="flex flex-wrap gap-4 mb-8 justify-center">
-            <div className="flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
-              <MapPin className="h-5 w-5 text-amber-600" />
-              <span>{location.province}</span>
-              {location.district && <span>- {location.district}</span>}
+          {/* Location metadata with Favorite button */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex flex-wrap gap-4 mb-4 justify-center">
+              <div className="flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
+                <MapPin className="h-5 w-5 text-amber-600" />
+                <span>{location.province}</span>
+                {location.district && <span>- {location.district}</span>}
+              </div>
+              <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-full">
+                <Tag className="h-5 w-5 text-emerald-600" />
+                <span>{location.category}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-full">
-              <Tag className="h-5 w-5 text-emerald-600" />
-              <span>{location.category}</span>
-            </div>
+            
+            {/* Add Favorite Button */}
+            <FavoriteButton location={location} className="mt-2" />
           </div>
 
           {/* Social sharing */}
@@ -112,9 +119,11 @@ export default async function LocationDetailPage({
                 This is a popular {location.category.toLowerCase()} destination in {location.province}. Plan your visit
                 to experience the natural beauty and cultural significance of this location.
               </p>
-              <button className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition-colors">
-                Plan Your Visit
-              </button>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link href={`/trip/create?locationId=${location.id}&locationName=${encodeURIComponent(location.name)}`} className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition-colors">
+                  Plan Your Visit
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -2,9 +2,14 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
+
 // import { AuthRedirect } from "@/components/auth/AuthRedirect";
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
 // import { getMessages } from "next-intl/server";
+
+import { AuthRedirect } from "@/components/auth/AuthRedirect";
+import { AuthRefresher } from "@/components/auth/AuthRefresher"; // New import
+
 
 
 
@@ -59,14 +64,15 @@ export default async function LocaleLayout({
 
   return (
     <>
-    <html className={`${beVietnamPro.className} ${roboto.className}`} lang={locale} >
-      <body>
-        {/* <AuthRedirect /> */}
-        <NextIntlClientProvider  locale={locale}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+      <AuthRedirect />
+      {/* Add the client component for auth refresh */}
+      <html  className={`${beVietnamPro.className} ${roboto.className}`} lang={locale}>
+        <body>
+          <NextIntlClientProvider>
+            {children}
+          </NextIntlClientProvider>
+        </body>
+      </html>
     </>
   );
 }
