@@ -14,7 +14,6 @@ import { AuthRefresher } from "@/components/auth/AuthRefresher"; // New import
 
 
 
-
 // Font Family
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['vietnamese'],
@@ -71,8 +70,12 @@ export default async function LocaleLayout({
       <html  className={`${beVietnamPro.className} ${roboto.className}`} lang={locale}>
         <body>
           <NextIntlClientProvider>
+          <div className="flex flex-col min-h-screen">
             <Navbar />
-            {children}
+            <div className="flex-1">
+              {children}
+            </div>
+          </div>
           </NextIntlClientProvider>
         </body>
       </html>

@@ -227,6 +227,8 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
               onChange={handleImageChange}
               accept="image/*"
               className="hidden"
+              title="Upload your profile picture"
+              placeholder="Choose a file"
             />
           </div>
           {uploadError && (
@@ -257,6 +259,7 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
+              title="Change your name"
               type="text"
               value={user.name}
               onChange={handleNameChange}

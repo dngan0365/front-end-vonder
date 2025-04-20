@@ -1,6 +1,5 @@
 'use client'
 import Image from 'next/image';
-import NextNProgress from 'nextjs-progressbar';
 
 export default function Loading() {
   // Define the Loading UI here
@@ -9,10 +8,10 @@ export default function Loading() {
         <Image
           src="/logo.svg"
           alt="Vonders"
-          width={60}
-          height={60}
+          width={100}
+          height={100}
         />
-        <NextNProgress color="#77DAE6" startPosition={0.3} stopDelayMs={200} height={3} showOnShallow={true} />
+
       </div>
       
     )

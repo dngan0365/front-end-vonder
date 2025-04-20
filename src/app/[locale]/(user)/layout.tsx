@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Navbar from "@/components/navbar/navbar";
 import { AuthRefresher } from '@/components/auth/AuthRefresher';
 
 

@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl"
 import { useState} from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Atom, Globe, Menu, X, Home, MapPin, MessageSquare, User, Bell } from "lucide-react"
+import { Luggage, Map , LogOut, Bot, Globe, Menu, X, MapPin, MessageSquare, User, Bell } from "lucide-react"
 import { DropdownMenuItem, HoverableDropdown } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -20,7 +20,7 @@ const Navbar = () => {
   const locale = pathName.split('/')[1];
   const t = useTranslations("Navbar");
   const router = useRouter()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const pathWithoutLocale = pathName.replace(`/${locale}`, '');
@@ -40,7 +40,7 @@ const Navbar = () => {
     {
       href: '/travel',
       label: t('travel'),
-      icon: <Home className="h-6 w-6 mr-2" />
+      icon: <Luggage className="h-6 w-6 mr-2" />
     },
     {
       href: '/forum',
@@ -50,12 +50,16 @@ const Navbar = () => {
     {
       href: '/map',
       label: t('map'),
-      icon: <Atom className="h-6 w-6 mr-2" />
+      icon: <Map className="h-6 w-6 mr-2" />
     }
   ];
 
   // Notification
   const notificationCount = 3;
+  const handleLogout = () => {
+    logout();
+    router.push(`/`);
+  };
 
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -83,7 +87,7 @@ const Navbar = () => {
               className={cn(
                 'group flex items-center px-4 py-5 text-sm font-medium transition-colors',
                 isActive(link.href)
-                  ? 'bg-primary/10 text-primary'
+                  ? 'bg-[#77DAE6]/5 text-[#4ad4e4]'
                   : 'hover:bg-[#77DAE6]/5 hover:text-[#4ad4e4]'
               )}
             >
@@ -156,11 +160,16 @@ const Navbar = () => {
           >
             {user?.role === 'ADMIN' && 
               <DropdownMenuItem>
-                  <Link href={`/${locale}/admin`}>{t('admin')}</Link>
+                  <Link href={`/${locale}/admin`}>
+                    {t('admin')}
+                  </Link>
               </DropdownMenuItem>
               }
               <DropdownMenuItem>
-                  <Link href={`/${locale}/chatbot`}>{t('chatbot')}</Link>
+                  <Link href={`/${locale}/chatbot`} className="flex w-full items-center justify-between">
+                        <span>{t('chatbot')}</span>
+                        <Bot className="h-4 w-4"/>
+                  </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                   <Link href={`/${locale}/profile`}>{t('profile')}</Link>
@@ -170,7 +179,10 @@ const Navbar = () => {
               </DropdownMenuItem>
               <hr/>
               <DropdownMenuItem>
-                  <Link href={`/${locale}/logout`}>{t('logout')}</Link>
+                  <button className="flex w-full items-center justify-between" onClick={handleLogout}>
+                    <span>{t('logout')}</span>
+                    <LogOut className="h-4 w-4" />
+                  </button>
               </DropdownMenuItem>
           </HoverableDropdown>
           </>
@@ -184,7 +196,7 @@ const Navbar = () => {
 
 
             <Button variant="outline" size="lg"
-            className="px-6 py-4 rounded-[50px] text-base font-semibold text-primary border-[#4ad4e4] hover:bg-[#77DAE6]/10" asChild>
+            className="px-6 py-4 rounded-[50px] border-[#4ad4e4] hover:bg-[#77DAE6]/10" asChild>
               <Link href={`/${locale}/auth/login`}>
                 {t('login')}
               </Link>

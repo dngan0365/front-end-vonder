@@ -35,7 +35,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-20' : 'w-64'} min-h-screen bg-gray-800 text-white transition-width duration-300 ease-in-out`}>
+    <div className={`${isCollapsed ? 'w-20' : 'w-64'} sticky top-16 h-[calc(100vh-65px)] bg-gray-800 text-white transition-width duration-300 ease-in-out`}>
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="p-4 border-b border-gray-700 flex items-center justify-between">
