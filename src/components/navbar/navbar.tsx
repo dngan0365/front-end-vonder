@@ -35,22 +35,22 @@ const Navbar = () => {
     {
       href: '/explore',
       label: t('explore'),
-      icon: <MapPin className="h-6 w-6 mr-2" />
+      icon: <MapPin className="h-6 w-6" />
     },
     {
       href: '/travel',
       label: t('travel'),
-      icon: <Luggage className="h-6 w-6 mr-2" />
+      icon: <Luggage className="h-6 w-6" />
     },
     {
       href: '/forum',
       label: t('forum'),
-      icon: <MessageSquare className="h-6 w-6 mr-2" />
+      icon: <MessageSquare className="h-6 w-6" />
     },
     {
       href: '/map',
       label: t('map'),
-      icon: <Map className="h-6 w-6 mr-2" />
+      icon: <Map className="h-6 w-6" />
     }
   ];
 
@@ -79,7 +79,7 @@ const Navbar = () => {
           <span className="text-xl font-semibold">Vonders</span>
         </Link>
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1 ">
+        <nav className="hidden md:flex items-center">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -98,7 +98,7 @@ const Navbar = () => {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center">
           {/* Language Switch */}
           <HoverableDropdown
             trigger={
