@@ -56,3 +56,8 @@
       display: none;
     }
   }
+  @media screen and (min-width: 890px) {
+    .title {
+      display: flex;
+    }
+  }

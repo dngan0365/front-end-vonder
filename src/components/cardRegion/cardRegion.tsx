@@ -14,7 +14,7 @@ interface Destination {
   buttonColor: string;
 }
 
-export default function cardRegion() {
+export default function CardRegion() {
   const destinations: Destination[] = [
     {
       id: 1,
@@ -42,7 +42,7 @@ export default function cardRegion() {
     }
   ];
 
-    const [activeRegion, setActiveRegion] = useState(null);
+    const [activeRegion, setActiveRegion] = useState<string | null>(null);
     
     const regions = {
         northern: {
@@ -62,7 +62,7 @@ export default function cardRegion() {
         }
     };
 
-    const handleRegionHover = (region) => {
+    const handleRegionHover = (region: string | null) => {
         setActiveRegion(region);
     };
 
@@ -82,7 +82,7 @@ export default function cardRegion() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {destinations.map((destination) => (
-            <div 
+            <div
               key={destination.id} 
               className="bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1"
             >
@@ -98,8 +98,8 @@ export default function cardRegion() {
               <div className="p-6 flex flex-col items-center text-center">
                 <h2 className="text-2xl font-semibold mb-3">{destination.region}</h2>
                 <p className="text-gray-600 mb-6">{destination.description}</p>
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className={`${destination.buttonColor} font-medium hover:underline`}
                 >
                   Explore
@@ -174,31 +174,34 @@ export default function cardRegion() {
             Vietnam unfolds like a living painting across its three regions, each with its own unique beauty. Together, they weave a breathtaking story of nature, culture, and adventure.
           </p>
           
-          {Object.keys(regions).map((regionKey) => (
-            <div 
-              key={regionKey}
-              className={`mb-6 ${activeRegion === regionKey ? 'opacity-100' : 'opacity-80'} transition-opacity duration-300`}
-            >
-              <h2 className={`text-2xl font-bold mb-2 ${styles[regionKey]}`}>
-                {regions[regionKey].name}
-                <span className="block w-16 h-1 mt-1 bg-cyan-400"></span>
-              </h2>
-              
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                {regions[regionKey].cities.map((city) => (
-                  <div key={city} className="text-sm">
-                    {city}
-                  </div>
-                ))}
+          {Object.keys(regions).map((regionKey) => {
+            const key = regionKey as keyof typeof regions; // Explicitly type regionKey
+            return (
+              <div 
+                key={regionKey}
+                className={`mb-6 ${activeRegion === regionKey ? 'opacity-100' : 'opacity-80'} transition-opacity duration-300`}
+              >
+                <h2 className={`text-2xl font-bold mb-2 ${styles[regionKey]}`}>
+                  {regions[key].name}
+                  <span className="block w-16 h-1 mt-1 bg-cyan-400"></span>
+                </h2>
+                
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  {regions[key].cities.map((city: string) => (
+                    <div key={city} className="text-sm">
+                      {city}
+                    </div>
+                  ))}
+                </div>
+                
+                {activeRegion === regionKey && (
+                  <p className="text-base mt-2 animate-fadeIn">
+                    {regions[key].description}
+                  </p>
+                )}
               </div>
-              
-              {activeRegion === regionKey && (
-                <p className="text-base mt-2 animate-fadeIn">
-                  {regions[regionKey].description}
-                </p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

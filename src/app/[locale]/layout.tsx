@@ -1,3 +1,4 @@
+// import for language
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -5,8 +6,9 @@ import { setRequestLocale } from 'next-intl/server';
 
 // import { AuthRedirect } from "@/components/auth/AuthRedirect";
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
-// import { getMessages } from "next-intl/server";
 
+import Navbar from "../../components/navbar/navbar";
+// authentication
 import { AuthRedirect } from "@/components/auth/AuthRedirect";
 import { AuthRefresher } from "@/components/auth/AuthRefresher"; // New import
 
@@ -64,11 +66,12 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <AuthRedirect />
+      {/* <AuthRedirect /> */}
       {/* Add the client component for auth refresh */}
       <html  className={`${beVietnamPro.className} ${roboto.className}`} lang={locale}>
         <body>
           <NextIntlClientProvider>
+            <Navbar />
             {children}
           </NextIntlClientProvider>
         </body>

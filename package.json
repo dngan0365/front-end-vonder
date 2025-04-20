@@ -26,6 +26,7 @@
     "lucide-react": "^0.487.0",
     "next": "^15.3.0-canary.25",
     "next-intl": "^4.0.2",
+    "nextjs-progressbar": "^0.0.16",
     "react": "^19.0.0",
     "react-day-picker": "^9.6.7",
     "react-dom": "^19.0.0",
@@ -38,14 +39,19 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/google.maps": "^3.58.1",
-    "@types/node": "^20.17.28",
+    "@types/node": "^20.17.30",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/tailwindcss": "^3.0.11",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.0.0",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
 }

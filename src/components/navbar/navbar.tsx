@@ -1,21 +1,24 @@
-
 'use client';
-
-import "@/app/globals.css";
-import { useTranslations } from "next-intl"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useState } from "react"
+// Authentication
 import { useAuth } from "@/context/AuthContext"
+// Translage Language
+import { usePathname, useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+// Others
+import { useState} from "react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Atom, Globe, Menu, X, Home, MapPin, MessageSquare, User } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Atom, Globe, Menu, X, Home, MapPin, MessageSquare, User, Bell } from "lucide-react"
+import { DropdownMenuItem, HoverableDropdown } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
-const Navbar = ({ locale }: { locale: string }) => {
-  const t = useTranslations("NavbarLinks")
+import style from "./navbar.module.css"
+
+const Navbar = () => {
   const pathName = usePathname()
+  const locale = pathName.split('/')[1];
+  const t = useTranslations("Navbar");
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -30,26 +33,29 @@ const Navbar = ({ locale }: { locale: string }) => {
 
   const navLinks = [
     {
-      href: '/',
-      label: t('Places'),
+      href: '/explore',
+      label: t('explore'),
       icon: <MapPin className="h-6 w-6 mr-2" />
     },
     {
-      href: '/things',
-      label: t('Things'),
+      href: '/travel',
+      label: t('travel'),
       icon: <Home className="h-6 w-6 mr-2" />
     },
     {
       href: '/forum',
-      label: t('Forum'),
+      label: t('forum'),
       icon: <MessageSquare className="h-6 w-6 mr-2" />
     },
     {
       href: '/map',
-      label: t('Map'),
+      label: t('map'),
       icon: <Atom className="h-6 w-6 mr-2" />
     }
   ];
+
+  // Notification
+  const notificationCount = 3;
 
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -78,61 +84,96 @@ const Navbar = ({ locale }: { locale: string }) => {
                 'group flex items-center px-4 py-5 text-sm font-medium transition-colors',
                 isActive(link.href)
                   ? 'bg-primary/10 text-primary'
-                  : 'hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]'
+                  : 'hover:bg-[#77DAE6]/5 hover:text-[#4ad4e4]'
               )}
             >
               {link.icon}
-              <span>{link.label}</span>
-            </Link>
+              <span className={`hidden ${style.title}`}>{link.label}</span>
+              </Link>
           ))}
         </nav>
 
         {/* Right Side */}
         <div className="flex items-center space-x-2">
           {/* Language Switch */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="p-2 w-14 h-14">
-                <Globe className="h-10 w-10" />
+          <HoverableDropdown
+            trigger={
+              <button className={cn("px-4 py-5 transition-colors")}>
+                <Globe className="h-6 w-6" />
                 <span className="sr-only">Switch language</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {['en', 'vi'].map((lang) => (
-                <DropdownMenuItem
-                  key={lang}
-                  onClick={() => handleLanguageChange(lang)}
-                  className={cn(
-                    'cursor-pointer',
-                    locale === lang && 'bg-primary/10 text-primary'
-                  )}
-                >
-                  {lang === 'en' ? 'English' : 'Tiếng Việt'}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </button>
+            }
+            align="end"
+          >
+            {['en', 'vi'].map((lang) => (
+              <DropdownMenuItem
+                key={lang}
+                onClick={() => handleLanguageChange(lang)}
+                className={cn(
+                  'cursor-pointer',
+                  locale === lang && 'bg-[#77DAE6]/10 text-[#4ad4e4]'
+                )}
+              >
+                {lang === 'en' ? t("en") : t("vi")}
+              </DropdownMenuItem>
+            ))}
+          </HoverableDropdown>
 
           {/* Auth Buttons */}
           {isAuthenticated ? (
-            <Button variant="ghost" size="sm" className="flex px-6 py-4 rounded-[50px] items-center gap-2" asChild>
-              <Link href={`/${locale}/profile`}>
-                {user?.image ? (
-                  <div className="relative h-6 w-6 rounded-full overflow-hidden">
-                    <Image 
-                      src={user.image} 
-                      alt={user.name || "Profile"} 
-                      fill 
-                      sizes="24px"
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <User className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">{user?.name || t("profile")}</span>
-              </Link>
-            </Button>
+          <>
+            <button className="relative px-4 py-5 hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]">
+              <Bell className="h-6 w-6" />
+              {notificationCount > 0 && (
+                <span className="absolute top-2 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                  {notificationCount}
+                </span>
+              )}
+              <span className="sr-only">Notifications</span>
+            </button>
+
+            <HoverableDropdown
+            trigger={
+                    <button className="px-4 py-5">
+                      <Link href={`/${locale}/profile`}>
+                        {user?.image ? (
+                          <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                            <Image 
+                              src={user.image} 
+                              alt={user.name || "Profile"} 
+                              fill 
+                              sizes="30px"
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <User className="h-6 w-6" />
+                        )}
+                      </Link>
+                    </button>
+            }
+            align="end"
+          >
+            {user?.role === 'ADMIN' && 
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/admin`}>{t('admin')}</Link>
+              </DropdownMenuItem>
+              }
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/chatbot`}>{t('chatbot')}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/profile`}>{t('profile')}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/settings`}>{t('settings')}</Link>
+              </DropdownMenuItem>
+              <hr/>
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/logout`}>{t('logout')}</Link>
+              </DropdownMenuItem>
+          </HoverableDropdown>
+          </>
           ) : (
             <>
           <Button size="lg" className="bg-[#4ad4e4] px-6 py-4 rounded-[50px] text-white hover:bg-[#77DAE6]" asChild>
