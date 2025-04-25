@@ -1,4 +1,3 @@
-
 "use client";
 import {useTranslations} from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -43,6 +42,7 @@ export default function Home() {
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <h2 className="text-xl font-semibold mb-6">
+        Explore Location
         {t('exploreDestinations')}
       </h2>
       
@@ -68,9 +68,7 @@ export default function Home() {
         <div className="text-center py-10">
           <h3 className="text-gray-800">No locations found</h3>
         </div>
-      )
-  }
+      )}
     </div>
   );
-
 }
