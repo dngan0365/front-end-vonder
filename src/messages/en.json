@@ -165,7 +165,8 @@
         "creating": "Creating...",
         "locationCreated": "Location created successfully!",
         "enterDescription": "Enter location description...",
-        "coverImage": "Cover Image"
+        "coverImage": "Cover Image",
+        "events": "Events"
     },
     "Forum": {
         "createPost": "Create New Post",

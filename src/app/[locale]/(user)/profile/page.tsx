@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/hooks/useFavorite";
+import { useSaveEvent } from "@/hooks/useSaveEvent"
 import { useTrip } from "@/hooks/useTrip";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -11,12 +12,13 @@ import Link from "next/link";
 import { uploadImage } from "@/api/upload";
 import { updateUserProfile } from "@/api/user";
 
-type TabType = 'profile' | 'favorites' | 'trips';
+type TabType = 'profile' | 'favorites' | 'trips' | 'savedEvents';
 
 export default function ProfilePage({ params }: { params: Promise<{ locale: string }> | { locale: string } }) {
   const { user, logout, isAuthenticated, loading, refreshUser, updateUser } = useAuth();
   const { favorites, loading: favoritesLoading, error: favoritesError, removeFavorite, refreshFavorites } = useFavorites();
   const { userTrips, isLoading: tripsLoading, error: tripsError, fetchUserTrips } = useTrip();
+  const { savedEvents, loading: saveEventLoading, error: saveEventError, unsaveEvent, refreshSavedEvents } = useSaveEvent();
   
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
@@ -75,6 +77,28 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
       loadFavorites();
     }
   }, [isClient, isAuthenticated, user?.id, refreshFavorites, isDataLoaded]);
+
+  useEffect(() => {
+    if (isClient && isAuthenticated && user && !isDataLoaded) {
+      const loadSaveEvents = async () => {
+        try {
+          await refreshSavedEvents();
+          setIsDataLoaded(true); // Mark data as loaded
+          console.log('✅ Events loaded successfully');
+        } catch (error) {
+          console.error('❌ Error loading events:', error);
+        }
+      };
+      
+      loadSaveEvents();
+    }
+  }, [isClient, isAuthenticated, user?.id, refreshSavedEvents, isDataLoaded]);
+
+  useEffect(() => {
+    if (isDataLoaded) {
+      console.log('Current saved events:', savedEvents);
+    }
+  }, [savedEvents, isDataLoaded]);
 
   useEffect(() => {
     if (isClient && !loading && !isAuthenticated) {
@@ -163,8 +187,9 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     <div className="flex flex-col space-y-2 mb-8">
       {[
         { id: 'profile', name: t('profileTab'), icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+        { id: 'trips', name: t('tripsTab'), icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
         { id: 'favorites', name: t('favoritesTab'), icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
-        { id: 'trips', name: t('tripsTab'), icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' }
+        { id: 'savedEvents', name: 'Saved Events', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' }
       ].map((tab) => (
         <button
           key={tab.id}
@@ -354,6 +379,83 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     </div>
   );
 
+  const SaveEvent = () => (
+    <div>
+    <h2 className="text-2xl font-bold mb-6 text-gray-800">Save Events</h2>
+
+    {saveEventLoading ? (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mr-3"></div>
+        <p>Loading saved event</p>
+      </div>
+    ) : saveEventError ? (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <p>{t("errorLoadingFavorites")}</p>
+        <p className="mt-2">Error details: {String(saveEventError)}</p>
+      </div>
+    ) : !savedEvents || savedEvents.length === 0 ? (
+      <div className="bg-gray-50 rounded-lg p-8 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <p className="text-gray-600">Save event</p>
+      </div>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {savedEvents.map((event) => (
+          <div key={location.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg">
+            <div className="relative h-48 w-full">
+              <Image
+                src={event.coverImage || '/images/placeholder.jpg'}
+                alt={event.name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+            <div className="p-4">
+              <h3 className="font-bold text-xl mb-2 line-clamp-2">{event.name}</h3>
+              <div className = "flex justify-between">
+                <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <span>From: {formatDate(event.startDate)}</span>
+                </div>
+                <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <span>To: {formatDate(event.endDate)}</span>
+                </div>
+              </div>
+              {event.location && (
+                  <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{event.location.name}, {event.location.province.replace('_', ' ')}</span>
+                  </div>
+                )}
+              <div className="mt-4 flex justify-between">
+                <Link href={`/locations/${event.id}`}>
+                  <span className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    {t("viewDetails")} →
+                  </span>
+                </Link>
+                <button
+                  onClick={() => unsaveEvent(event)}
+                  className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  {t("removeFavorite")}
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+  )
+
   const TripsContent = () => (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -469,8 +571,9 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
         
         <div className="flex-1">
           {activeTab === 'profile' && <ProfileContent />}
-          {activeTab === 'favorites' && <FavoritesContent />}
           {activeTab === 'trips' && <TripsContent />}
+          {activeTab === 'favorites' && <FavoritesContent />}
+          {activeTab === 'savedEvents' && <SaveEvent />}
         </div>
       </div>
     </div>

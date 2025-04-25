@@ -178,7 +178,8 @@
         "creating": "Đang tạo...",
         "locationCreated": "Tạo địa điểm thành công!",
         "enterDescription": "Nhập mô tả địa điểm...",
-        "coverImage": "Ảnh bìa"
+        "coverImage": "Ảnh bìa",
+        "events": "Sự kiện"
     },
     "Forum": {
         "createPost": "Tạo bài viết mới",

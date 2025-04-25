@@ -26,44 +26,15 @@ export const createLocation = async (locationData: Omit<Location, 'id' | 'create
   }
 };
 
-// Cache timeout in milliseconds (e.g., 1 hour)
-const CACHE_TIMEOUT = 60 * 60 * 1000;
-
 // Enhanced getAllLocations with caching
-export const getAllLocations = async (forceRefresh = false) => {
+export const getAllLocations = async () => {
   try {
-    const cachedData = localStorage.getItem('cached_locations');
-    const cachedTimestamp = localStorage.getItem('cached_locations_timestamp');
-    
-    // Use cache if it's not expired and we're not forcing a refresh
-    if (
-      !forceRefresh && 
-      cachedData && 
-      cachedTimestamp && 
-      (Date.now() - parseInt(cachedTimestamp)) < CACHE_TIMEOUT
-    ) {
-      return JSON.parse(cachedData);
-    }
-    
     // Fetch fresh data
     const response = await axiosInstance.get<Location[]>(`location`);
-    
-    // Save to cache
-    localStorage.setItem('cached_locations', JSON.stringify(response.data));
-    localStorage.setItem('cached_locations_timestamp', Date.now().toString());
-    
     return response.data;
-  } catch (error) {
-    // If fetch fails but we have cached data, return that
-    const cachedData = localStorage.getItem('cached_locations');
-    if (cachedData) {
+    } catch {
       console.warn('Using cached locations due to fetch error');
-      return JSON.parse(cachedData);
     }
-    
-    console.error('Error fetching locations:', error);
-    throw error;
-  }
 };
 
 // Get a single location by ID
@@ -144,3 +115,14 @@ export const removeFavoriteLocation = async (userId: string, locationId: string)
     throw error;
   }
 };
+
+export async function searchLocations(searchTerm: string) {
+  try {
+    const response = await axiosInstance.get(`location/search?term=${encodeURIComponent(searchTerm)}`);
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error('Error searching locations:', error);
+    throw error;
+  }
+}

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
-import { FaMapMarkerAlt, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUser, FaSignOutAlt, FaCalendar } from 'react-icons/fa';
+import { Table2 } from "lucide-react"
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -19,15 +20,25 @@ const Sidebar = () => {
 
   const menuItems = [
     { 
+      path: '/admin/dashboard', 
+      name: t('profile'), 
+      icon: <FaUser className="text-lg" /> 
+    },
+    { 
       path: '/admin/location', 
       name: t('locations'), 
       icon: <FaMapMarkerAlt className="text-lg" /> 
     },
     { 
+      path: '/admin/event', 
+      name: t('events'), 
+      icon: <FaCalendar className="text-lg" /> 
+    },
+    { 
       path: '/admin/profile', 
       name: t('profile'), 
       icon: <FaUser className="text-lg" /> 
-    }
+    },
   ];
   
   const handleLogout = async () => {
@@ -41,10 +52,11 @@ const Sidebar = () => {
         <div className="p-4 border-b border-gray-700 flex items-center justify-between">
           {!isCollapsed && <h1 className="text-xl font-bold">{t('adminPanel')}</h1>}
           <button 
+            title="Toggle Sidebar"
             onClick={toggleSidebar} 
             className={`${isCollapsed ? 'mx-auto' : ''} p-2 rounded-full hover:bg-gray-700`}
           >
-            {isCollapsed ? '→' : '←'}
+            <Table2 className="h-6 w-6" />
           </button>
         </div>
         

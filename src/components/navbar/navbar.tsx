@@ -98,7 +98,7 @@ const Navbar = () => {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
           {/* Language Switch */}
           <HoverableDropdown
             trigger={
@@ -166,7 +166,7 @@ const Navbar = () => {
               </DropdownMenuItem>
               }
               <DropdownMenuItem>
-                  <Link href={`/${locale}/chatbot`} className="flex w-full items-center justify-between">
+                  <Link href={`/${locale}/chat`} className="flex w-full items-center justify-between">
                         <span>{t('chatbot')}</span>
                         <Bot className="h-4 w-4"/>
                   </Link>
