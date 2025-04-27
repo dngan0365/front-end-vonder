@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import { getFavoriteLocations, addFavoriteLocation, removeFavoriteLocation } from '@/api/location';
 import { useAuth } from '@/context/AuthContext';

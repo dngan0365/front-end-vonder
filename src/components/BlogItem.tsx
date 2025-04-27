@@ -13,7 +13,7 @@ const BlogItem: React.FC<BlogItemProps> = ({ blog }) => {
   // Calculate vote counts
   const upvotes = blog.votes?.filter(vote => vote.type === 'UP').length || 0;
   const downvotes = blog.votes?.filter(vote => vote.type === 'DOWN').length || 0;
-  const voteTotal = upvotes - downvotes;
+  // const voteTotal = upvotes - downvotes;
 
   // Format date
   const formattedDate = formatDistanceToNow(new Date(blog.createdAt), { addSuffix: true });

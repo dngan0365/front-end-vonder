@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { BlogComment, CommentVoteType, ReplyVoteType, Reply, CreateReplyDto } from '@/api/forum';
+'use client'
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { BlogComment, CommentVoteType, ReplyVoteType, CreateReplyDto } from '@/api/forum';
 import { FiThumbsUp, FiThumbsDown, FiEdit2, FiTrash2, FiUser, FiCornerDownRight, FiMessageSquare } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
 import ReplyItem from './ReplyItem';
@@ -118,7 +120,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         {/* Avatar */}
         <div className="bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
           {comment.user?.image ? (
-            <img
+            <Image 
               src={comment.user.image}
               alt={comment.user.name || 'User'}
               className="w-8 h-8 rounded-full border-2 border-white"
@@ -147,6 +149,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                 value={editContent}
                 rows={3}
+                placeholder="Edit your comment here..."
                 onChange={(e) => setEditContent(e.target.value)}
               />
               <div className="mt-2 flex gap-2">
@@ -231,6 +234,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   onClick={() => setIsEditing(true)}
                   className="flex items-center text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                   disabled={isDeleting}
+                  title="Edit comment"
                 >
                   <FiEdit2 className="w-4 h-4" />
                 </button>

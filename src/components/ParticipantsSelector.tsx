@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
 import { Badge } from '@/components/ui/badge';
-import { Search, X, Plus, User, Loader2, Lock } from 'lucide-react';
+import { X, Plus, User, Loader2, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { FormDescription } from '@/components/ui/form';
 import Image from 'next/image';
@@ -76,6 +76,7 @@ export default function ParticipantsSelector({
                   ) : (
                     <button
                       type="button"
+                      title="Remove participant"
                       onClick={() => handleRemoveParticipant(participant.id)}
                       className="ml-1 text-muted-foreground rounded-full hover:bg-muted p-0.5"
                     >

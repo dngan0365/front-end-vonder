@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Location } from '../api/location';
 import { FaHeart } from 'react-icons/fa'; // Import heart icon
 
+
 interface LocationItemProps {
   location: Location;
   isFavorite?: boolean; // Add new prop

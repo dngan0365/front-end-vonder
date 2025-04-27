@@ -3,11 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const t = useTranslations('NavbarLinks');
+  const t = useTranslations("Footer");
   const pathname = usePathname();
   const locale = pathname.split('/')[1] || 'en';
 
@@ -23,7 +23,7 @@ export default function Footer() {
             </Link>
           </div>
           <p className="text-gray-500 text-sm max-w-xs">
-            Copyright © {currentYear} Vonders. All rights reserved.
+            {t('copyright')}
           </p>
           <div className="flex gap-4">
             <Image src="/facebook.svg" alt="Facebook" width={24} height={24} />
@@ -47,42 +47,42 @@ export default function Footer() {
         <div className="flex flex-wrap gap-10">
           {/* Linkes */}
           <div>
-            <h3 className="text-gray-900 font-bold mb-4">Linkes</h3>
+            <h3 className="text-gray-900 font-bold mb-4">{t('links')}</h3>
             <ul className="space-y-2 text-gray-600 text-sm">
-              <li><Link href="#">Home</Link></li>
-              <li><Link href="#">Episodes</Link></li>
-              <li><Link href="#">Trending</Link></li>
-              <li><Link href="#">Category</Link></li>
-              <li><Link href="#">Blog</Link></li>
+              <li><Link href="#">{t('home')}</Link></li>
+              <li><Link href="#">{t('episodes')}</Link></li>
+              <li><Link href="#">{t('trending')}</Link></li>
+              <li><Link href="#">{t('category')}</Link></li>
+              <li><Link href="#">{t('forum')}</Link></li>
             </ul>
           </div>
 
           {/* Features */}
           <div>
-            <h3 className="text-gray-900 font-bold mb-4">Features</h3>
+            <h3 className="text-gray-900 font-bold mb-4">{t('features')}</h3>
             <ul className="space-y-2 text-gray-600 text-sm">
-              <li><Link href="#">Style guide</Link></li>
-              <li><Link href="#">Instructions</Link></li>
-              <li><Link href="#">Catelog</Link></li>
-              <li><Link href="#">Your podcast</Link></li>
+              <li><Link href="#">{t('styleGuide')}</Link></li>
+              <li><Link href="#">{t('instructions')}</Link></li>
+              <li><Link href="#">{t('catalog')}</Link></li>
+              <li><Link href="#">{t('yourPodcast')}</Link></li>
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <h3 className="text-gray-900 font-bold mb-4">Company</h3>
+            <h3 className="text-gray-900 font-bold mb-4">{t('about')}</h3>
             <ul className="space-y-2 text-gray-600 text-sm">
-              <li><Link href="#">Privacy</Link></li>
-              <li><Link href="#">Terms</Link></li>
-              <li><Link href="#">Security</Link></li>
-              <li><Link href="#">Cookies</Link></li>
+              <li><Link href="#">{t('privacy')}</Link></li>
+              <li><Link href="#">{t('terms')}</Link></li>
+              <li><Link href="#">{t('security')}</Link></li>
+              <li><Link href="#">{t('cookies')}</Link></li>
             </ul>
           </div>
         </div>
 
         {/* Newsletter */}
         <div className="flex flex-col gap-3 justify-center align-items-center">
-          <h3 className="text-gray-900 font-bold mb-4 text-center">Sign up for our newsletter</h3>
+          <h3 className="text-gray-900 font-bold mb-4 text-center">{t('signUp')}</h3>
           <form className="flex rounded-full border border-gray-300 overflow-hidden bg-white">
             <input
               type="email"

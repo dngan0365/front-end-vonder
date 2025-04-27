@@ -39,14 +39,13 @@ export default function Login() {
   };
 
   return  (
-    <div className="min-h-screen flex">
+    <div className="flex h-full">
       {/* Left side - Image */}
       <div className="hidden lg:block w-2/5 relative h-auto">
         <Image
           src='/VietNamLogin.png'
           alt="Vietnam"
-          layout="fill"
-          objectFit="cover"
+          fill
           className="object-cover rounded-r-none rounded-l-lg"
         />
       </div>

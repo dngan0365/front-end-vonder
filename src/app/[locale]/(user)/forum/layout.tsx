@@ -9,7 +9,8 @@ import {
   Bookmark, 
   Search, 
   Gamepad2, 
-  UserCircle
+  UserCircle,
+  Table2
 } from 'lucide-react'
 
 export default function ForumLayout({
@@ -30,16 +31,17 @@ export default function ForumLayout({
   ]
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-1">
       {/* Sidebar */}
-      <aside className={`bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 h-screen flex flex-col ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
+      <aside className={`sticky top-16 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 h-[calc(100vh-65px)] flex flex-col ${isCollapsed ? 'w-16' : 'w-54'} transition-all duration-300`}>
         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
           {!isCollapsed && <h2 className="text-xl font-bold">Forum</h2>}
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800"
+            className="p-2 rounded-md hover:bg-[#77DAE6]/8 hover:text-[#4ad4e4] dark:hover:bg-slate-800"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {isCollapsed ? '→' : '←'}
+            <Table2 className="h-5 w-5" />
           </button>
         </div>
         
@@ -49,8 +51,8 @@ export default function ForumLayout({
               <li key={index}>
                 <Link 
                   href={item.href}
-                  className={`flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800 ${
-                    pathname.includes(item.href) ? 'bg-blue-50 text-blue-600 dark:bg-slate-800 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
+                  className={`flex items-center p-2 rounded-md hover:bg-[#77DAE6]/8 hover:text-[#4ad4e4] dark:hover:bg-slate-800 ${
+                    pathname.includes(item.href) ? 'bg-[#77DAE6]/10 text-[#4ad4e4] dark:bg-slate-800 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   <span className="mr-3">{item.icon}</span>

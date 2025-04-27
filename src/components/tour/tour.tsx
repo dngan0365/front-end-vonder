@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Head from 'next/head';
 import styles from './tour.module.css';
 
 export default function MustSeeSites() {

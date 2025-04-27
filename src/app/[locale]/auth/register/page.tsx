@@ -43,7 +43,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex">
       {/* Left side - Image */}
       <div className="hidden lg:block w-2/5 relative h-auto">
         <Image
