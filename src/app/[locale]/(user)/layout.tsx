@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AuthRefresher } from '@/components/auth/AuthRefresher';
-
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function UserLayout({
   children,
@@ -12,11 +12,9 @@ export default function UserLayout({
   params: { locale: string };
 }) {
   return (
-    <div>
-      <AuthRefresher/>
-      <main>
-        {children}
-      </main>
-    </div>
+    <AuthProvider>
+        <AuthRefresher />
+        <main>{children}</main>
+    </AuthProvider>
   );
 }
