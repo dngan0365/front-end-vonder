@@ -5,6 +5,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+git clonehttps://github.com/dngan0365/front-end-vonder
+npm i
 npm run dev
 # or
 yarn dev
