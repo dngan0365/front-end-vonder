@@ -7,7 +7,12 @@ const nextConfig: NextConfig = {
   experimental: {
   },
   images: {
-    domains: ['cdn-icons-png.flaticon.com', 'res.cloudinary.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,

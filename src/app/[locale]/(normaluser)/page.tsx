@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getAllLocations, Location } from '@/api/location';
 
 // import component
-import CardRegion from '../../components/cardRegion/cardRegion';
+import CardRegion from '@/components/cardRegion/cardRegion';
 import LocationItem from '@/components/LocationItem';
 import EvenList from '@/components/eventlist/eventlist';
 import Feature from '@/components/feature/feature'

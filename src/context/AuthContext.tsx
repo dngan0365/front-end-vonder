@@ -1,6 +1,17 @@
 "use client"
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { login as apiLogin, register as apiRegister, logout as apiLogout, isLoggedIn } from '@/api/auth';
+import { 
+  login as apiLogin, 
+  register as apiRegister, 
+  logout as apiLogout, 
+  isLoggedIn,
+  agencyLogin as apiAgencyLogin,
+  registerAgency as apiRegisterAgency,
+  AgencyRegisterData,
+  getAgencyProfile as apiGetAgencyProfile,
+  isAgencyAuthenticated as apiIsAgencyAuthenticated,
+  agencyLogout as apiAgencyLogout
+} from '@/api/auth';
 
 // Interface for the user object
 interface User {
@@ -11,31 +22,56 @@ interface User {
   image: string;
 }
 
+// Interface for the agency profile object
+interface AgencyProfile {
+  id: string;
+  name: string;
+  email: string;
+  description?: string;
+  logo?: string;
+  website?: string;
+  phoneNumber?: string;
+  address?: string;
+  verified: boolean;
+}
+
 // Interface for the context value
 interface AuthContextType {
   user: User | null;
+  agencyProfile: AgencyProfile | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isAgency: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, name: string, password: string) => Promise<void>;
+  agencyLogin: (email: string, password: string) => Promise<void>;
+  registerAgency: (agencyData: AgencyRegisterData) => Promise<void>;
   logout: () => void;
+  agencyLogout: () => void;
   clearError: () => void;
   refreshUser: () => Promise<User | null>;
+  refreshAgencyProfile: () => Promise<AgencyProfile | null>;
   updateUser: (userData: Partial<User>) => void;
 }
 
 // Create the context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  agencyProfile: null,
   loading: false,
   error: null,
   isAuthenticated: false,
+  isAgency: false,
   login: async () => {},
   register: async () => {},
+  agencyLogin: async () => {},
+  registerAgency: async () => {},
   logout: () => {},
+  agencyLogout: () => {},
   clearError: () => {},
   refreshUser: async () => Promise.resolve(null),
+  refreshAgencyProfile: async () => Promise.resolve(null),
   updateUser: () => {},
 });
 
@@ -56,9 +92,11 @@ interface ApiError {
 // AuthProvider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [agencyProfile, setAgencyProfile] = useState<AgencyProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAgency, setIsAgency] = useState<boolean>(false);
 
   // Function to retrieve user profile from localStorage
   const fetchUserProfile = async (): Promise<User | null> => {
@@ -81,6 +119,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (storedUser) {
               const userData = JSON.parse(storedUser);
               setUser(userData);
+              
+              // Check if user is an agency
+              const isAgencyUser = apiIsAgencyAuthenticated();
+              setIsAgency(isAgencyUser);
+              
+              // Fetch agency profile if user is an agency
+              if (isAgencyUser) {
+                refreshAgencyProfile();
+              }
             } else {
               const userProfile = await fetchUserProfile();
               setUser(userProfile);
@@ -143,10 +190,93 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   };
 
+  // Agency Login function
+  const agencyLogin = async (email: string, password: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiAgencyLogin(email, password);
+      console.log('Agency login response:', response);
+      setUser({
+        id: response.agency.id,
+        email: response.agency.email,
+        name: response.agency.name,
+        role: 'agency', // or another appropriate role string
+        image: response.agency.logo || '', // fallback to empty string if logo is undefined
+      });
+      setIsAgency(true);
+      
+      if (response.agency) {
+        localStorage.setItem('user', JSON.stringify({
+          id: response.agency.id,
+          email: response.agency.email,
+          name: response.agency.name,
+          role: 'agency',
+          image: response.agency.logo || '',
+        }));
+      }
+      console.log('user:', localStorage.getItem('user'));
+      
+      // Fetch agency profile after successful login
+      await refreshAgencyProfile();
+      
+      setIsAuthenticated(true);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      setError(error.response?.data?.message || error.message || 'Failed to login as agency');
+      console.error('Agency login error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Agency Register function
+  const registerAgency = async (agencyData: AgencyRegisterData) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiRegisterAgency(agencyData);
+      console.log('Agency registration response:', response);
+      setUser({
+        id: response.agency.id,
+        email: response.agency.email,
+        name: response.agency.name,
+        role: 'agency',
+        image: response.agency.logo || '',
+      });
+      setIsAgency(true);
+      
+      // Fetch agency profile after successful registration
+      await refreshAgencyProfile();
+      
+      setIsAuthenticated(true);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      setError(error.response?.data?.message || error.message || 'Failed to register agency');
+      console.error('Agency registration error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout function
   const logout = () => {
     apiLogout();
     setUser(null);
+    setAgencyProfile(null);
+    setIsAgency(false);
+    setIsAuthenticated(false);
+    localStorage.removeItem('user');
+  };
+  
+  // Agency Logout function
+  const agencyLogout = () => {
+    apiAgencyLogout();
+    setUser(null);
+    setAgencyProfile(null);
+    setIsAgency(false);
     setIsAuthenticated(false);
     localStorage.removeItem('user');
   };
@@ -173,6 +303,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Function to refresh agency profile data
+  const refreshAgencyProfile = async (): Promise<AgencyProfile | null> => {
+    try {
+      if (!isAuthenticated || !isAgency) return null;
+      
+      const agencyData = await apiGetAgencyProfile();
+      if (agencyData) {
+        setAgencyProfile(agencyData);
+        return agencyData;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error refreshing agency profile:', error);
+      return null;
+    }
+  };
+
   // Function to update user data (used for profile updates)
   const updateUser = (userData: Partial<User>) => {
     if (!user) return;
@@ -185,14 +332,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Context value
   const value = {
     user,
+    agencyProfile,
     loading,
     error,
     isAuthenticated,
+    isAgency,
     login,
     register,
+    agencyLogin,
+    registerAgency,
     logout,
+    agencyLogout,
     clearError,
     refreshUser,
+    refreshAgencyProfile,
     updateUser,
   };
 
@@ -211,4 +364,4 @@ export const useAuth = () => {
 };
 
 export default AuthContext;
-export type { User };
+export type { User, AgencyProfile };

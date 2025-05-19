@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import Sidebar from '@/components/admin/sidebar';
+import Sidebar from '@/components/agency/sidebar';
 
-export default function AdminLayout({
+export default function AgencyLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && (!isAuthenticated || (user && user.role !== 'ADMIN'))) {
+    if (!loading && (!isAuthenticated || (user && user.role !== 'agency'))) {
       router.push('/auth/login');
     }
   }, [isAuthenticated, user, loading, router]);
@@ -27,7 +27,7 @@ export default function AdminLayout({
     );
   }
 
-  if (!isAuthenticated || (user && user.role !== 'ADMIN')) {
+  if (!isAuthenticated || (user && user.role !== 'agency')) {
     return null;
   }
 
