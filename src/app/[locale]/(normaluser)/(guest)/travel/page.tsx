@@ -17,14 +17,24 @@ export default async function ToursPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const rawParams = await searchParams;
-  
+
   // Now you can safely access properties
-  const category = typeof rawParams.category === "string" ? rawParams.category : undefined;
-  const province = typeof rawParams.province === "string" ? rawParams.province : undefined;
-  const minPrice = typeof rawParams.minPrice === "string" ? Number.parseInt(rawParams.minPrice) : undefined;
-  const maxPrice = typeof rawParams.maxPrice === "string" ? Number.parseInt(rawParams.maxPrice) : undefined;
-  const duration = typeof rawParams.duration === "string" ? rawParams.duration : undefined;
-  const page = typeof rawParams.page === "string" ? Number.parseInt(rawParams.page) : 1;
+  const category =
+    typeof rawParams.category === "string" ? rawParams.category : undefined;
+  const province =
+    typeof rawParams.province === "string" ? rawParams.province : undefined;
+  const minPrice =
+    typeof rawParams.minPrice === "string"
+      ? Number.parseInt(rawParams.minPrice)
+      : undefined;
+  const maxPrice =
+    typeof rawParams.maxPrice === "string"
+      ? Number.parseInt(rawParams.maxPrice)
+      : undefined;
+  const duration =
+    typeof rawParams.duration === "string" ? rawParams.duration : undefined;
+  const page =
+    typeof rawParams.page === "string" ? Number.parseInt(rawParams.page) : 1;
   const limit = 12;
 
   // Fetch tours with filters
@@ -43,13 +53,7 @@ export default async function ToursPage({
       <div className="flex flex-col md:flex-row justify-between items-start gap-8">
         {/* Sidebar with filters */}
         <div className="w-full md:w-1/4 lg:w-1/5 sticky top-24">
-          <TourFilters
-            selectedCategory={category}
-            selectedProvince={province}
-            priceRange={[minPrice || 0, maxPrice || 1000]}
-            // Also pass the duration so it stays in sync
-            selectedDuration={duration}
-          />
+          <TourFilters />
         </div>
 
         {/* Main content */}
