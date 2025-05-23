@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 
 interface AuthResponse {
-  token: string;
+  access_token: string;
   user: {
     id: string;
     email: string;
@@ -18,14 +18,16 @@ interface AuthResponse {
  * @returns Promise with user data and token
  */
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  try {
+    try {
     const response = await axiosInstance.post<AuthResponse>('/auth/login', {
       email,
       password,
     });
+    console.log('response ',response.data)
+    console.log('Login response:', response.data.access_token);
     
     // Save token to localStorage for future requests
-    localStorage.setItem('auth_token', response.data.token);
+    localStorage.setItem('auth_token', response.data.access_token);
     
     return response.data;
   } catch (error) {
@@ -49,9 +51,10 @@ export const register = async (email: string, name: string, password: string): P
       name,
       password
     });
+    console.log('Registration response:', response.data.access_token);
     
     // Save token to localStorage for future requests
-    localStorage.setItem('auth_token', response.data.token);
+    localStorage.setItem('auth_token', response.data.access_token);
     
     return response.data;
   } catch (error) {

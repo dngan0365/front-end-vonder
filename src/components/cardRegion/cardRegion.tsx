@@ -91,6 +91,7 @@ export default function CardRegion() {
                   src={destination.image}
                   alt={destination.alt}
                   fill
+                  priority
                   style={{ objectFit: 'cover' }}
                   className={styles.cardImage}
                 />

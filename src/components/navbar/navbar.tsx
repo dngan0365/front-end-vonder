@@ -145,7 +145,8 @@ const Navbar = () => {
                             <Image 
                               src={user.image} 
                               alt={user.name || "Profile"} 
-                              fill 
+                              fill
+                              priority
                               sizes="30px"
                               className="object-cover"
                             />
@@ -160,7 +161,7 @@ const Navbar = () => {
           >
             {user?.role === 'ADMIN' && 
               <DropdownMenuItem>
-                  <Link href={`/${locale}/admin`}>
+                  <Link href={`/${locale}/admin/location`}>
                     {t('admin')}
                   </Link>
               </DropdownMenuItem>

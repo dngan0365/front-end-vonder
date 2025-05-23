@@ -2,12 +2,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { Heart, MessageSquare, Paperclip, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import Image from 'next/image'
+import Image from 'next/image';
+import { sendChatMessage, getChatMessages, ChatMessage as ApiChatMessage, ChatResponse } from '@/api/chatbot';
+import { ImageUploader } from '@/components/ui/ImageUploader';
 
 type Message = {
+  id?: string;
   role: 'user' | 'assistant';
   content: string;
   attachments?: Attachment[];
+  createdAt?: string;
 };
 
 type Attachment = {
@@ -40,30 +44,48 @@ export default function ChatBot() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Auto-resize textarea as content grows
-    useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-        }
-        }, [input]);
+  // Auto-resize textarea as content grows
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [input]);
 
   // Load chat data when chatId changes
   useEffect(() => {
     if (chatId && chatId !== 'new') {
-      // Load the chat from API or local storage
+      // Load the chat messages from API
       const loadChat = async () => {
         try {
-          const response = await fetch(`/api/chats/${chatId}`);
-          if (response.ok) {
-            const chatData = await response.json();
-            setCurrentChat(chatData);
-            setMessages(chatData.messages || []);
-          } else {
-            console.error('Failed to load chat');
-          }
+          setIsLoading(true);
+          const chatMessages = await getChatMessages(chatId);
+          
+          // Convert API messages to our local format
+          const formattedMessages: Message[] = chatMessages.map((msg: ApiChatMessage) => ({
+            id: msg.id,
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content,
+            createdAt: msg.createdAt
+          }));
+          
+          setMessages(formattedMessages);
+          
+          // Create a basic chat object
+          setCurrentChat({
+            id: chatId,
+            title: chatMessages.length > 0 && chatMessages[0].role === 'user' 
+              ? chatMessages[0].content.substring(0, 30) 
+              : 'Chat',
+            messages: formattedMessages,
+            createdAt: new Date(chatMessages[0]?.createdAt || Date.now()),
+            updatedAt: new Date(chatMessages[chatMessages.length - 1]?.createdAt || Date.now())
+          });
+          
         } catch (error) {
           console.error('Error loading chat:', error);
+        } finally {
+          setIsLoading(false);
         }
       };
       
@@ -79,27 +101,6 @@ export default function ChatBot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Function to update chat in the list
-  const updateChatInList = async (chat: Chat) => {
-    try {
-      // In a real app, this would send an update to your API
-      await fetch(`/api/chats/${chat.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(chat),
-      });
-      
-      // If this is a new chat, redirect to the proper URL
-      if (chatId === 'new') {
-        router.push(`/chat/${chat.id}`);
-      }
-    } catch (error) {
-      console.error('Error updating chat:', error);
-    }
-  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -132,8 +133,6 @@ export default function ChatBot() {
         // Upload file to your API
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
-          headers: {
-          },
           body: formData,
         });
 
@@ -168,6 +167,7 @@ export default function ChatBot() {
   const removeAttachment = (id: string) => {
     setAttachments(prev => prev.filter(attachment => attachment.id !== id));
   };
+  
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
@@ -193,54 +193,26 @@ export default function ChatBot() {
     setIsLoading(true);
 
     try {
-      // Call API with LlamaIndex
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: updatedMessages,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
-      const data = await response.json();
+      // Send the message using our API function
+      const response = await sendChatMessage(
+        chatId !== 'new' ? chatId : undefined, 
+        input
+      );
       
       // Add bot response to chat
-      const botMessage: Message = { role: 'assistant', content: data.content };
+      const botMessage: Message = { 
+        role: 'assistant', 
+        content: response.response
+      };
+      
       const finalMessages = [...updatedMessages, botMessage];
       setMessages(finalMessages);
 
-      // Create or update the chat
-      let chat: Chat;
-      
-      if (!currentChat) {
-        // Create a new chat
-        const title = input.length > 30 ? `${input.substring(0, 30)}...` : input || 'Image Chat';
-        chat = {
-          id: `chat-${Date.now()}`,
-          title,
-          messages: finalMessages,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        setCurrentChat(chat);
-      } else {
-        // Update existing chat
-        chat = {
-          ...currentChat,
-          messages: finalMessages,
-          updatedAt: new Date()
-        };
-        setCurrentChat(chat);
+      // If this was a new chat, update the URL
+      if (chatId === 'new' && response.sessionId) {
+        // Update URL without refreshing page
+        router.push(`/chat/${response.sessionId}`, { scroll: false });
       }
-      
-      // Update the chat in the list
-      await updateChatInList(chat);
       
     } catch (error) {
       console.error('Error:', error);
@@ -252,83 +224,72 @@ export default function ChatBot() {
 
   return (
     <div className="flex flex-col h-full mx-auto rounded-lg overflow-hidden flex-1">
-      {/* Chat header */}
-      {/* <div className="p-4 border-b flex items-center justify-between">
-        <div className="flex items-center">
-          <MessageSquare className="text-cyan-500 mr-2" size={24} />
-          <h2 className="font-semibold text-gray-700">
-            {currentChat?.title || 'New Chat'}
-          </h2>
-        </div>
-      </div> */}
-
-
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto p-4">
         {messages.length === 0 ? (
-             <div className="flex flex-col items-center justify-center h-full text-center gap-6 p-6">
-             {/* Logo */}
+          <div className="flex flex-col items-center justify-center h-full text-center gap-6 p-6">
+            {/* Logo */}
+            <Image
+              src="/logo.svg"
+              alt="Vonders Logo"
+              width={100}
+              height={100}
+            />
+
+            {/* Heading */}
+            <h1 className="mb-4 font-medium text-4xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-200 bg-clip-text text-transparent">
+              Welcome to your Vonder assistant
+            </h1>
+
+            {/* Feature Cards Container */}
+            <div className="hidden lg:flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-5xl">
+              {/* Card 1 */}
+              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
                 <Image
-                    src="/logo.svg"
-                    alt="Vonders Logo"
-                    width={100}
-                    height={100}
+                  src="/icon/culture.png"
+                  alt="Cultural Explorer Icon"
+                  width={40}
+                  height={40}
+                  className="rounded-lg"
                 />
-    
-                {/* Heading */}
-                <h1 className="mb-4 font-medium text-4xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-200 bg-clip-text text-transparent">
-                    Welcome to your Vonder assistant
-                </h1>
-    
-                {/* Feature Cards Container */}
-                <div className="hidden lg:flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-5xl">
-                    {/* Card 1 */}
-                    <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                        <Image
-                            src="/icon/culture.png"
-                            alt="Cultural Explorer Icon"
-                            width={40}
-                            height={40}
-                            className="rounded-lg"
-                        />
-                        <h2 className="text-lg font-semibold">Cultural Explorer</h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Provides detailed but easy-to-read information about Vietnamese culture.
-                        </p>
-                    </div>
-    
-                    {/* Card 2 */}
-                    <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                        <Image
-                            src="/icon/pilgrim.png"
-                            alt="Attraction Curator Icon"
-                            width={40}
-                            height={40}
-                            className="rounded-lg"
-                        />
-                        <h2 className="text-lg font-semibold">Attraction Curator</h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Recommends top tourist attractions based on your preferences.
-                        </p>
-                    </div>
-    
-                    {/* Card 3 */}
-                    <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                        <Image
-                            src="/icon/schedule.png"
-                            alt="Smart Trip Planner Icon"
-                            width={40}
-                            height={40}
-                            className="rounded-lg"
-                        />
-                        <h2 className="text-lg font-semibold">Smart Trip Planner</h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Create a customized daily travel schedule based on your interests, and trip duration.
-                        </p>
-                    </div>
-                </div>
+                <h2 className="text-lg font-semibold">Cultural Explorer</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Provides detailed but easy-to-read information about Vietnamese culture.
+                </p>
+              </div>
+
+              {/* Card 2 */}
+              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
+                <Image
+                  src="/icon/pilgrim.png"
+                  alt="Attraction Curator Icon"
+                  width={40}
+                  height={40}
+                  className="rounded-lg"
+                />
+                <h2 className="text-lg font-semibold">Attraction Curator</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Recommends top tourist attractions based on your preferences.
+                </p>
+              </div>
+
+              {/* Card 3 */}
+              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
+                <Image
+                  src="/icon/schedule.png"
+                  alt="Smart Trip Planner Icon"
+                  width={40}
+                  height={40}
+                  className="rounded-lg"
+                />
+                <h2 className="text-lg font-semibold">Smart Trip Planner</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Create a customized daily travel schedule based on your interests, and trip duration.
+                </p>
+              </div>
             </div>
-        ): (
+          </div>
+        ) : (
           <div className="space-y-4">
             {messages.map((msg, index) => (
               <div 
@@ -353,6 +314,8 @@ export default function ChatBot() {
                             <Image
                               src={attachment.url} 
                               alt={attachment.name}
+                              width={300}
+                              height={200}
                               className="max-w-full rounded border"
                             />
                           )}
@@ -391,6 +354,8 @@ export default function ChatBot() {
                 <Image
                   src={attachment.url} 
                   alt={attachment.name}
+                  width={64}
+                  height={64}
                   className="w-full h-full object-cover"
                 />
               )}
@@ -411,20 +376,20 @@ export default function ChatBot() {
         {/* Hidden file input */}
         <input
           type="file"
-          title = "Upload image"
+          title="Upload image"
           ref={fileInputRef}
           onChange={handleFileUpload}
           accept="image/*"
           multiple
           className="hidden"
-          disabled={isLoading }
+          disabled={isLoading}
         />
         
         {/* File upload button */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading }
+          disabled={isLoading}
           title="Upload image"
           className={`p-2 rounded-l-lg border border-r-0 ${
             isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]'

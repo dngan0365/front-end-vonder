@@ -52,9 +52,10 @@ export default function LocationDetailPage() {
       {/* Hero Section */}
       <div className="relative w-full h-[80vh] overflow-hidden">
         <Image
+          // Width and height are determined by the `fill` property
           src={location?.coverImage}
-          alt={location?.name || ""}
           fill
+          alt={location?.name || ""}
           className="object-cover"
           priority
         />
