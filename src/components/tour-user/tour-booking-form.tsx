@@ -11,6 +11,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "react-toastify"
+import { createTourBooking } from "@/api/tourBooking"
+import { Textarea } from "@/components/ui/textarea"
+import { useAuth } from "@/context/AuthContext"
 
 interface TourBookingFormProps {
   tourId: string
@@ -27,7 +30,9 @@ export function TourBookingForm({ tourId, tourName, price, startDates = [], maxC
     startDates.length > 0 ? new Date(startDates[0]) : undefined,
   )
   const [participants, setParticipants] = useState(1)
+  const [notes, setNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { user} = useAuth();
 
   // Calculate total price
   const totalPrice = price * participants
@@ -59,20 +64,27 @@ export function TourBookingForm({ tourId, tourName, price, startDates = [], maxC
     setIsSubmitting(true)
 
     try {
-      // In a real app, you would call your booking API here
-      // await bookTour({ tourId, date: selectedDate, participants })
+      // Create booking using the API
+      const bookingData = {
+        tourId,
+        bookingDate: selectedDate,
+        participants,
+        notes: notes.trim() || undefined,
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (!user?.id) {
+        toast.error("You must be logged in to book a tour.")
+        setIsSubmitting(false)
+        return
+      }
+      const booking = await createTourBooking(user?.id, bookingData)
 
       toast.success(`Your booking for ${tourName} has been confirmed.`)
 
       // Redirect to booking confirmation page
-      // router.push(`/bookings/confirmation/${bookingId}`)
-
-      // For demo purposes, just show a success message
-      toast.success("This is a demo. In a real app, you would be redirected to a confirmation page.")
+      router.push(`/bookings/${booking.id}`)
     } catch (error) {
+      console.error("Booking error:", error)
       toast.error("There was an error processing your booking. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -143,6 +155,16 @@ export function TourBookingForm({ tourId, tourName, price, startDates = [], maxC
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="notes">Special Requests or Notes</Label>
+          <Textarea
+            id="notes"
+            placeholder="Any special requests or dietary requirements?"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
         </div>
 
         <div className="pt-4 space-y-2">

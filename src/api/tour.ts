@@ -14,6 +14,8 @@ export interface Tour {
   includes?: string
   excludes?: string
   startDates?: Date[]
+  averageRating?: number  // Add this property
+  totalReviews?: number   // Add this property
   // Add other tour properties as needed
 }
 
