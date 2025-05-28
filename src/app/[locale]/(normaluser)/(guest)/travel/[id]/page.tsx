@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { TourGallery } from "@/components/tour-user/tour-gallery"
 import { TourItinerary } from "@/components/tour-user/tour-itinerary"
 import { TourBookingForm } from "@/components/tour-user/tour-booking-form"
+import { TourReviewsSection } from "@/components/tour-user/tour-reviews-section"
 import { Clock, MapPin, Users, CheckCircle, XCircle } from "lucide-react"
 
 interface TourPageProps {
@@ -136,6 +137,13 @@ export default async function TourPage({ params }: TourPageProps) {
                 )}
               </ul>
             </div>
+          </div>
+
+          <Separator className="my-8" />
+
+          {/* Tour Reviews Section */}
+          <div className="mb-8">
+            <TourReviewsSection tourId={tour.id} />
           </div>
         </div>
 

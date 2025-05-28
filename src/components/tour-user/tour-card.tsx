@@ -2,9 +2,10 @@ import type { Tour } from "@/api/tour"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, MapPin, Users } from "lucide-react"
+import { Clock, MapPin } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { StarRating } from "./star-rating"
 
 interface TourCardProps {
   tour: Tour
@@ -25,63 +26,57 @@ export function TourCard({ tour }: TourCardProps) {
     .replace(/\b\w/g, (char) => char.toUpperCase())
 
   return (
-    <Card className="overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-200">
-      <div className="relative h-48 w-full">
-        <Link href={`/travel/${tour.id}`}>
-          {tour.images && tour.images.length > 0 ? (
+    <Link href={`/travel/${tour.id}`}>
+      <Card className="overflow-hidden h-full transition-all hover:shadow-md">
+        <div className="relative h-48">
+          {tour.images?.length > 0 ? (
             <Image
-              src={tour.images[0] || "/placeholder.svg"}
+              src={tour.images[0]}
               alt={tour.title}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-muted flex items-center justify-center">
-              <MapPin className="h-12 w-12 text-muted-foreground" />
+            <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+              No image
             </div>
           )}
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/50" />
-          <Badge className="absolute top-3 right-3">{tour.category}</Badge>
-        </Link>
-      </div>
-
-      <CardContent className="flex-grow pt-4">
-        <Link href={`/travel/${tour.id}`} className="hover:underline">
-          <h3 className="text-xl font-semibold mb-2 line-clamp-2">{tour.title}</h3>
-        </Link>
-        <div className="flex items-center text-sm text-muted-foreground mb-3">
-          <MapPin className="h-4 w-4 mr-1" />
-          <span>{formattedProvince}</span>
+          <Badge className="absolute top-2 left-2">{tour.category}</Badge>
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-          {/* Strip HTML tags for the card preview */}
-          {tour.description.replace(/<[^>]*>/g, "")}
-        </p>
-
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-xl mb-2 line-clamp-2">{tour.title}</h3>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+            <MapPin className="h-4 w-4" />
+            <span>{formattedProvince}</span>
+            <Clock className="h-4 w-4 ml-2" />
             <span>{tour.duration} days</span>
           </div>
-          {tour.maxCapacity && (
-            <div className="flex items-center">
-              <Users className="h-4 w-4 mr-1 text-muted-foreground" />
-              <span>Max {tour.maxCapacity} people</span>
+          {typeof tour.averageRating === "number" && tour.averageRating > 0 && (
+            <div className="flex items-center gap-2 mb-2">
+              <StarRating
+                rating={tour.averageRating}
+                size={14}
+              />
+              <span className="text-sm font-medium">
+                {tour.averageRating.toFixed(1)}
+                <span className="text-muted-foreground text-xs ml-1">
+                  ({tour.totalReviews || 0} {tour.totalReviews === 1 ? 'review' : 'reviews'})
+                </span>
+              </span>
             </div>
           )}
-        </div>
-      </CardContent>
-
-      <CardFooter className="border-t pt-4 flex justify-between items-center">
-        <div>
-          <span className="text-sm text-muted-foreground">From</span>
-          <p className="text-lg font-bold">{formattedPrice}</p>
-        </div>
-        <Link href={`/travel/${tour.id}`}>
-          <Button>View Details</Button>
-        </Link>
-      </CardFooter>
-    </Card>
+          <p className="text-sm line-clamp-2 text-muted-foreground">
+            {tour.description?.replace(/<[^>]*>/g, "")}
+          </p>
+        </CardContent>
+        <CardFooter className="px-4 py-3 bg-muted/40 flex justify-between items-center">
+          <div>
+            <p className="font-semibold">{formattedPrice}</p>
+            <p className="text-xs text-muted-foreground">per person</p>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   )
 }
