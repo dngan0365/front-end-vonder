@@ -11,14 +11,19 @@ export function AuthRedirect() {
 
   useEffect(() => {
     // Wait until authentication check is completed
+    console.log("pathname", pathname);
     if (loading) return;
 
+    // Extract path without locale for consistent checks (e.g., /en/auth/login -> /auth/login)
+    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}\//, '/');
+    
     // Avoid redirecting if user is already on auth pages
-    if (!isAuthenticated && pathname.startsWith('/auth/')) return;
+    if (!isAuthenticated && (pathname.includes('/auth/') || pathWithoutLocale.startsWith('/auth/'))) return;
 
     // For authenticated users, only redirect if they're on login/register pages or root
     if (isAuthenticated && user) {
-      if (pathname === '/' || pathname.startsWith('/auth/')) {
+      if (pathname === '/' || pathname.endsWith('/') || 
+          pathname.includes('/auth/') || pathWithoutLocale.startsWith('/auth/')) {
         if (user.role === 'ADMIN') {
           router.push('/admin/location');
         } else if (user.role === 'agency') {
@@ -27,8 +32,8 @@ export function AuthRedirect() {
           router.push('/');
         }
       }
-    } else if (pathname !== '/auth/login' && pathname !== '/auth/register') {
-      // Only redirect unauthenticated users if they're not already on auth pages
+    } else if (!pathname.includes('/auth/') && !pathWithoutLocale.startsWith('/auth/')) {
+      // Only redirect unauthenticated users if they're not on any auth pages
       router.push('/auth/login');
     }
   }, [isAuthenticated, user, loading, router, pathname]);
