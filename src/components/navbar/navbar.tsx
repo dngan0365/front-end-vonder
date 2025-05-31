@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl"
 import { useState} from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Luggage, Map , LogOut, Bot, Globe, Menu, X, MapPin, MessageSquare, User, Bell } from "lucide-react"
+import { Luggage, Map , LogOut, Bot, Globe, Menu, X, MapPin, MessageSquare, User, Bell, Calendar } from "lucide-react"
 import { DropdownMenuItem, HoverableDropdown } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -51,7 +51,7 @@ const Navbar = () => {
       href: '/map',
       label: t('map'),
       icon: <Map className="h-6 w-6" />
-    }
+    },
   ];
 
   // Notification
@@ -176,6 +176,11 @@ const Navbar = () => {
               </DropdownMenuItem>
               <DropdownMenuItem>
                   <Link href={`/${locale}/settings`}>{t('settings')}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                  <Link href={`/${locale}/bookings`}>
+                      Bookings
+                  </Link>
               </DropdownMenuItem>
               <hr/>
               <DropdownMenuItem>
