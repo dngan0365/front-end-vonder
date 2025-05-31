@@ -58,6 +58,24 @@ export const getChatSessions = async () => {
   }
 };
 
+export const deleteChatSession = async (sessionId: string) => {
+  console.log('Deleting a chat session')
+  try {
+    const response = await axiosInstanceAI.delete(`/ai/chatbot/history/${sessionId}`);
+  } catch (error) {
+    console.error('Error deleting chat session')
+  }
+}
+
+export const editChatSessionTitle = async (sessionId: string) => {
+  console.log('Editing the chat session')
+  try {
+    const response = await axiosInstanceAI.put(`/ai/chatbot/history/${sessionId}`)
+  } catch(error) {
+    console.error('Error editing title')
+  }
+}
+
 /**
  * Get messages for a specific chat session
  */
@@ -74,11 +92,15 @@ export const getChatMessages = async (sessionId: string) => {
   }
 };
 
+
+
 /**
  * Send a chat message
  * @param sessionId Optional session ID for existing conversations
  * @param message Message text to send
  */
+
+
 export const sendChatMessage = async (
   sessionId: string | undefined, 
   message: string
@@ -100,6 +122,18 @@ export const sendChatMessage = async (
     throw error;
   }
 };
+
+
+export const createChatSession = async(ChatMessage) => {
+  console.log('Create a new chat session');
+  try {
+    const response = await axiosInstanceAI.post('/ai/chatbot/create')
+  }catch (error) {
+    console.error('Error fetching chat sessions:', error);
+    // Return empty array to prevent component crashes
+    return { chats: [] };
+  }
+}
 
 /**
  * Refresh the chatbot knowledge index (admin only)

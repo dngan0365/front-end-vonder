@@ -178,6 +178,12 @@ export default function Register() {
                 {t('login')}
               </Link>
             </p>
+            <p className="text-sm text-gray-600 mt-2">
+              {t('registerAsAgency') || 'Register as an agency?'}{' '}
+              <Link href="/auth/agency/register" className="font-medium text-[#4ad4e4] hover:text-[#77DAE6]">
+                {t('agencyRegister') || 'Agency Registration'}
+              </Link>
+            </p>
           </div>
         </div>
       </div>

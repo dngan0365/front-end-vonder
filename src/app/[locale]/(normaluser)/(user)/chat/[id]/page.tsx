@@ -52,6 +52,56 @@ export default function ChatBot() {
     }
   }, [input]);
 
+  // Load chat data when chatId changes
+  useEffect(() => {
+    if (chatId && chatId !== 'new') {
+      // Load the chat messages from API
+      const loadChat = async () => {
+        try {
+          setIsLoading(true);
+          const chatMessages = await getChatMessages(chatId);
+          
+          // Convert API messages to our local format
+          const formattedMessages: Message[] = chatMessages.map((msg: ApiChatMessage) => ({
+            id: msg.id,
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content,
+            createdAt: msg.createdAt
+          }));
+          
+          setMessages(formattedMessages);
+          
+          // Create a basic chat object
+          setCurrentChat({
+            id: chatId,
+            title: chatMessages.length > 0 && chatMessages[0].role === 'user' 
+              ? chatMessages[0].content.substring(0, 30) 
+              : 'Chat',
+            messages: formattedMessages,
+            createdAt: new Date(chatMessages[0]?.createdAt || Date.now()),
+            updatedAt: new Date(chatMessages[chatMessages.length - 1]?.createdAt || Date.now())
+          });
+          
+        } catch (error) {
+          console.error('Error loading chat:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      loadChat();
+    } else {
+      // Clear the chat for a new conversation
+      setMessages([]);
+      setCurrentChat(null);
+    }
+  }, [chatId]);
+
+  // Auto-scroll to bottom of messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -135,9 +185,41 @@ export default function ChatBot() {
       content: input,
       attachments: attachments.length > 0 ? [...attachments] : undefined
     };
+    
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput('');
+    setAttachments([]);
+    setIsLoading(true);
 
-    router.push(`/chat/${response.sessionId}`, { scroll: false });
+    try {
+      // Send the message using our API function
+      const response = await sendChatMessage(
+        chatId !== 'new' ? chatId : undefined, 
+        input
+      );
+      
+      // Add bot response to chat
+      const botMessage: Message = { 
+        role: 'assistant', 
+        content: response.response
+      };
+      
+      const finalMessages = [...updatedMessages, botMessage];
+      setMessages(finalMessages);
 
+      // If this was a new chat, update the URL
+      if (chatId === 'new' && response.sessionId) {
+        // Update URL without refreshing page
+        router.push(`/chat/${response.sessionId}`, { scroll: false });
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

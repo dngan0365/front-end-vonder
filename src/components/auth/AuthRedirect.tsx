@@ -1,28 +1,37 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 export function AuthRedirect() {
   const { isAuthenticated, user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // Wait until authentication check is completed
     if (loading) return;
 
+    // Avoid redirecting if user is already on auth pages
+    if (!isAuthenticated && pathname.startsWith('/auth/')) return;
+
+    // For authenticated users, only redirect if they're on login/register pages or root
     if (isAuthenticated && user) {
-      // User is logged in, redirect based on role
-      if (user.role === 'ADMIN') {
-        router.push('/admin/location');
-      } else {
-        router.push('/');
+      if (pathname === '/' || pathname.startsWith('/auth/')) {
+        if (user.role === 'ADMIN') {
+          router.push('/admin/location');
+        } else if (user.role === 'agency') {
+          router.push('/agency/dashboard');
+        } else {
+          router.push('/');
+        }
       }
-    } else {
-        router.push('/auth/login');
+    } else if (pathname !== '/auth/login' && pathname !== '/auth/register') {
+      // Only redirect unauthenticated users if they're not already on auth pages
+      router.push('/auth/login');
     }
-  }, [isAuthenticated, user, loading, router]);
+  }, [isAuthenticated, user, loading, router, pathname]);
 
   return null;
 }

@@ -120,12 +120,32 @@ const CommentItem: React.FC<CommentItemProps> = ({
         {/* Avatar */}
         <div className="relative bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
           {comment.user?.image ? (
+<<<<<<< HEAD
             <Image 
               fill
               src={comment.user.image}
               alt={comment.user.name || 'User'}
               className="w-8 h-8 rounded-full border-2 border-white"
             />
+=======
+            <div className="w-8 h-8 rounded-full relative border-2 border-white overflow-hidden">
+              <Image 
+                src={comment.user.image}
+                alt={comment.user.name || 'User'}
+                fill
+                sizes="32px"
+                style={{ objectFit: 'cover' }}
+                onError={(e) => {
+                  // Replace with default user icon when image fails to load
+                  const imgElement = e.currentTarget;
+                  if (imgElement.parentElement) {
+                    imgElement.style.display = 'none';
+                    imgElement.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gray-200"><FiUser className="text-gray-500" /></div>';
+                  }
+                }}
+              />
+            </div>
+>>>>>>> 1e3c757843c95f0d8327a3865625a523615fcd2e
           ) : (
             <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white">
               <FiUser className="text-gray-500" />
