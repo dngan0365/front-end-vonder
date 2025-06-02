@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { FaCalendarAlt, FaMapMarkerAlt, FaHotel, FaUsers, FaEdit, FaTrash, FaArrowLeft } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt, FaHotel, FaUsers, FaEdit, FaTrash, FaArrowLeft, FaCalendarPlus } from 'react-icons/fa';
 
 export default function TripDetailsPage() {
   const { id } = useParams();
@@ -95,6 +95,62 @@ export default function TripDetailsPage() {
     } catch (error) {
       console.error('Failed to leave trip:', error);
     }
+  };
+
+  // Generate Google Calendar link
+  const getGoogleCalendarLink = () => {
+    if (!trip) return '#';
+    
+    // Format dates to Google Calendar format (YYYYMMDDTHHMMSSZ)
+    const formatDateForGoogle = (date: string | Date) => {
+      try {
+        const d = new Date(date);
+        // Set to 00:00:00 UTC for start date and 23:59:59 UTC for end date
+        if (date === trip.startDate) {
+          d.setUTCHours(0, 0, 0, 0);
+        } else {
+          d.setUTCHours(23, 59, 59, 999);
+        }
+        return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      } catch (error) {
+        return '';
+      }
+    };
+
+    const startDate = formatDateForGoogle(trip.startDate);
+    const endDate = formatDateForGoogle(trip.endDate);
+    
+    // Prepare event details
+    const eventTitle = encodeURIComponent(trip.name || t('unnamedTrip'));
+    const eventDates = `${startDate}/${endDate}`;
+    
+    // Create description with trip details
+    let description = '';
+    if (trip.description) {
+      description += encodeURIComponent(trip.description);
+    }
+    if (trip.hotelName) {
+      description += encodeURIComponent(`\n\nAccommodation: ${trip.hotelName}`);
+      if (trip.hotelAddress) {
+        description += encodeURIComponent(`\nAddress: ${trip.hotelAddress}`);
+      }
+    }
+    if (participants && participants.length > 0) {
+      description += encodeURIComponent(`\n\nParticipants: ${participants.length} people`);
+    }
+    
+    // Location information
+    let location = '';
+    if (trip.location?.name) {
+      location = encodeURIComponent(trip.location.name);
+      if (trip.location.district && trip.location.province) {
+        location += encodeURIComponent(`, ${trip.location.district}, ${trip.location.province}`);
+      } else if (trip.location.province) {
+        location += encodeURIComponent(`, ${trip.location.province}`);
+      }
+    }
+    
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}&details=${description}&location=${location}&sf=true&output=xml`;
   };
   
   const isOwner = user && trip && participants?.some(p => p.userId === user.id);
@@ -184,24 +240,38 @@ export default function TripDetailsPage() {
         
         {/* Trip details */}
         <div className="p-6">
-          {/* Action buttons for trip owner */}
-          {isOwner && (
-            <div className="flex justify-end mb-4 gap-2">
-              <Link 
-                href={`/trip/${trip.id}/edit`}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                <FaEdit className="mr-2" /> {t('edit')}
-              </Link>
-              
-              <button
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                <FaTrash className="mr-2" /> {t('delete')}
-              </button>
-            </div>
-          )}
+          {/* Action buttons for trip owner and calendar */}
+          <div className="flex justify-between items-center mb-4">
+            {/* Google Calendar button - available to all users */}
+            <a
+              href={getGoogleCalendarLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors duration-200"
+              title="Add trip to Google Calendar"
+            >
+              <FaCalendarPlus className="mr-2" /> Add to Calendar
+            </a>
+
+            {/* Trip owner action buttons */}
+            {isOwner && (
+              <div className="flex gap-2">
+                <Link 
+                  href={`/trip/${trip.id}/edit`}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  <FaEdit className="mr-2" /> {t('edit')}
+                </Link>
+                
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  <FaTrash className="mr-2" /> {t('delete')}
+                </button>
+              </div>
+            )}
+          </div>
           
           {/* Trip info cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

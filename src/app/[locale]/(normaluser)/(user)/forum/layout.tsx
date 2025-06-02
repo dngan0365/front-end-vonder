@@ -24,10 +24,10 @@ export default function ForumLayout({
   const navItems = [
     { name: 'Forum', href: '/forum', icon: <Home size={20} /> },
     { name: 'Create', href: '/forum/create', icon: <PenSquare size={20} /> },
-    { name: 'Saved', href: '/forum/saved', icon: <Bookmark size={20} /> },
-    { name: 'Search', href: '/forum/search', icon: <Search size={20} /> },
-    { name: 'Game', href: '/forum/game', icon: <Gamepad2 size={20} /> },
-    { name: 'Profile', href: '/forum/profile', icon: <UserCircle size={20} /> },
+    // { name: 'Saved', href: '/forum/saved', icon: <Bookmark size={20} /> },
+    // { name: 'Search', href: '/forum/search', icon: <Search size={20} /> },
+    // { name: 'Game', href: '/forum/game', icon: <Gamepad2 size={20} /> },
+    // { name: 'Profile', href: '/forum/profile', icon: <UserCircle size={20} /> },
   ]
 
   return (

@@ -13,6 +13,27 @@ export interface Event {
     updatedAt: Date
 }
 
+// Pagination response interface
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Search and pagination parameters
+export interface SearchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+}
+
 // Create a new event
 export const createEvent = async (eventData: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
@@ -27,10 +48,20 @@ export const createEvent = async (eventData: Omit<Event, 'id' | 'createdAt' | 'u
 // Cache timeout in milliseconds (e.g., 1 hour)
 const CACHE_TIMEOUT = 60 * 60 * 1000;
 
-// Enhanced getAllLocations with caching
-export const getAllEvents = async (forceRefresh = false) => {
+// Get all events with pagination and search
+export const getAllEvents = async (params: SearchParams = {}) => {
   try {
-    const response = await axiosInstance.get<Event[]>(`event`);
+    const { page = 1, limit = 10, search = '' } = params;
+    
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...(search && { search })
+    });
+
+    const response = await axiosInstance.get<PaginatedResponse<Event>>(
+      `event?${queryParams.toString()}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -45,6 +76,48 @@ export const getEventById = async (id: string) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching event:', error);
+    throw error;
+  }
+};
+
+// Search events with pagination
+export const searchEvents = async (searchTerm: string, params: SearchParams = {}) => {
+  try {
+    const { page = 1, limit = 10 } = params;
+    
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      search: searchTerm
+    });
+
+    const response = await axiosInstance.get<PaginatedResponse<Event>>(
+      `event/search?${queryParams.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error searching events:', error);
+    throw error;
+  }
+};
+
+// Get events by month with pagination
+export const getEventsByMonth = async (month: number, year: number, params: SearchParams = {}) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = params;
+    
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...(search && { search })
+    });
+
+    const response = await axiosInstance.get<PaginatedResponse<Event>>(
+      `event/month/${year}/${month}?${queryParams.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching events by month:', error);
     throw error;
   }
 };

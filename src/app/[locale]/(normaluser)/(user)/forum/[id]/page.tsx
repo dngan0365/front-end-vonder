@@ -8,6 +8,8 @@ import { Blog, BlogVoteType, CreateReplyDto, ReplyVoteType } from '@/api/forum';
 import { useBlog } from '@/hooks/useBlog';
 import { useComments } from '@/hooks/useComments';
 import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
+
 import CommentItem from '@/components/CommentItem';
 
 export default function BlogPostDetail() {
@@ -529,9 +531,11 @@ export default function BlogPostDetail() {
             <div className="flex items-center">
               <div className="bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
                 {blog.author?.image ? (
-                  <img
+                  <Image
                     src={blog.author.image}
                     alt={blog.author.name}
+                    width={10} // tuỳ chỉnh width bạn muốn
+                    height={10} // tuỳ chỉnh height bạn muốn
                     className="w-10 h-10 rounded-full border-2 border-white"
                   />
                 ) : (
@@ -633,9 +637,11 @@ export default function BlogPostDetail() {
                 <div className="flex-shrink-0">
                   <div className="bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
                     {user?.image ? (
-                      <img
+                      <Image
                         src={user.image}
                         alt={user.name || ''}
+                        width={8} // tuỳ chỉnh width bạn muốn
+                        height={8} // tuỳ chỉnh height bạn muốn
                         className="w-8 h-8 rounded-full border-2 border-white"
                       />
                     ) : (

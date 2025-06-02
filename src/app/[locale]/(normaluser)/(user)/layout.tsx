@@ -1,4 +1,5 @@
 'use client';
+import { AuthRedirect } from "@/components/auth/AuthRedirect";
 
 import React from 'react';
 import { AuthRefresher } from '@/components/auth/AuthRefresher';
@@ -13,6 +14,7 @@ export default function UserLayout({
 }) {
   return (
     <AuthProvider>
+        <AuthRedirect/>
         <AuthRefresher />
         <main>{children}</main>
     </AuthProvider>

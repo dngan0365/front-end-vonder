@@ -45,7 +45,7 @@ export default function Register() {
   return (
     <div className="flex">
       {/* Left side - Image */}
-      <div className="hidden lg:block w-2/5 relative h-auto">
+      <div className="relative hidden lg:block w-2/5 relative h-auto">
         <Image
           src="/VietNamLogin.png"
           alt="Vietnam"

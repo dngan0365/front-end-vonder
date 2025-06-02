@@ -126,7 +126,7 @@ const Navbar = () => {
           {/* Auth Buttons */}
           {isAuthenticated ? (
           <>
-            <button className="relative px-4 py-5 hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]">
+            {/* <button className="relative px-4 py-5 hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]">
               <Bell className="h-6 w-6" />
               {notificationCount > 0 && (
                 <span className="absolute top-2 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
@@ -134,7 +134,7 @@ const Navbar = () => {
                 </span>
               )}
               <span className="sr-only">Notifications</span>
-            </button>
+            </button> */}
 
             <HoverableDropdown
             trigger={
@@ -145,7 +145,8 @@ const Navbar = () => {
                             <Image 
                               src={user.image} 
                               alt={user.name || "Profile"} 
-                              fill 
+                              fill
+                              priority
                               sizes="30px"
                               className="object-cover"
                             />
@@ -160,7 +161,7 @@ const Navbar = () => {
           >
             {user?.role === 'ADMIN' && 
               <DropdownMenuItem>
-                  <Link href={`/${locale}/admin`}>
+                  <Link href={`/${locale}/admin/location`}>
                     {t('admin')}
                   </Link>
               </DropdownMenuItem>
