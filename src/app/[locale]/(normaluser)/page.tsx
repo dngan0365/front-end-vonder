@@ -6,7 +6,7 @@ import { getAllLocations, Location } from '@/api/location';
 // import component
 import CardRegion from '@/components/cardRegion/cardRegion';
 import LocationItem from '@/components/LocationItem';
-import EvenList from '@/components/eventlist/eventlist';
+import EventList from '@/components/eventlist/eventlist';
 import Feature from '@/components/feature/feature'
 import MustSeeSites from '@/components/tour/tour';
 import TravelTips from '@/components/travelTips/travelTips';
@@ -99,7 +99,7 @@ export default function HomePage() {
       <CardRegion/>
       <TravelTips/>
       <MustSeeSites/>
-      <EvenList/>
+      <EventList/>
       
       {/* Locations Section */}
       <div className="bg-gray-50 py-16">

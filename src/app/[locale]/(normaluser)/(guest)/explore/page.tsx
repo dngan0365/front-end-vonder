@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CategoriesSidebar from '@/components/sidebar/CategoriesSidebar';
 import { getAllLocations, searchLocations, PaginatedResponse, Location } from '@/api/location';
 import { getAllEvents, searchEvents, Event } from '@/api/event';
-import EventList from '@/components/eventlist/EventList';
+import EventList from '@/components/eventlist/eventlist';
 import LocationItem from '@/components/LocationItem';
 
 interface PaginationInfo {
