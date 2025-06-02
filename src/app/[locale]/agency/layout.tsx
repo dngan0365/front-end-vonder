@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/agency/sidebar';
+import { AuthRedirect } from "@/components/auth/AuthRedirect";
 
 export default function AgencyLayout({
   children,
@@ -33,6 +34,7 @@ export default function AgencyLayout({
 
   return (
     <div className="flex h-screen">
+      <AuthRedirect />
       <Sidebar />
       <div className="flex-1 p-8 bg-gray-100 overflow-y-auto">
         {children}

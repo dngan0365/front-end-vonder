@@ -8,7 +8,7 @@ import { ImageUploader } from '@/components/ui/ImageUploader';
 
 type Message = {
   id?: string;
-  role: 'user' | 'assistant';
+  role: 'customer' | 'assistant';
   content: string;
   attachments?: Attachment[];
   createdAt?: string;
@@ -39,10 +39,40 @@ export default function ChatBot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load existing messages when chatId changes
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (chatId && chatId !== 'new') {
+        setIsLoadingMessages(true);
+        try {
+          const existingMessages = await getChatMessages(chatId);
+          const formattedMessages: Message[] = existingMessages.map((msg: any) => ({
+            id: msg.id,
+            role: msg.role,
+            content: msg.content,
+            createdAt: msg.createdAt
+          }));
+          setMessages(formattedMessages);
+        } catch (error) {
+          console.error('Error loading messages:', error);
+          setMessages([]);
+        } finally {
+          setIsLoadingMessages(false);
+        }
+      } else {
+        // New chat, start with empty messages
+        setMessages([]);
+      }
+    };
+
+    loadMessages();
+  }, [chatId]);
 
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -51,52 +81,7 @@ export default function ChatBot() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [input]);
-
-  // Load chat data when chatId changes
-  useEffect(() => {
-    if (chatId && chatId !== 'new') {
-      // Load the chat messages from API
-      const loadChat = async () => {
-        try {
-          setIsLoading(true);
-          const chatMessages = await getChatMessages(chatId);
-          
-          // Convert API messages to our local format
-          const formattedMessages: Message[] = chatMessages.map((msg: ApiChatMessage) => ({
-            id: msg.id,
-            role: msg.role as 'user' | 'assistant',
-            content: msg.content,
-            createdAt: msg.createdAt
-          }));
-          
-          setMessages(formattedMessages);
-          
-          // Create a basic chat object
-          setCurrentChat({
-            id: chatId,
-            title: chatMessages.length > 0 && chatMessages[0].role === 'user' 
-              ? chatMessages[0].content.substring(0, 30) 
-              : 'Chat',
-            messages: formattedMessages,
-            createdAt: new Date(chatMessages[0]?.createdAt || Date.now()),
-            updatedAt: new Date(chatMessages[chatMessages.length - 1]?.createdAt || Date.now())
-          });
-          
-        } catch (error) {
-          console.error('Error loading chat:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      
-      loadChat();
-    } else {
-      // Clear the chat for a new conversation
-      setMessages([]);
-      setCurrentChat(null);
-    }
-  }, [chatId]);
-
+  
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -179,11 +164,15 @@ export default function ChatBot() {
     e.preventDefault();
     if (input.trim() === '' && attachments.length === 0) return;
 
-    // Add user message to chat
+    const messageText = input.trim();
+    
+    // Add user message to chat immediately
     const userMessage: Message = { 
+      id: `temp-${Date.now()}`, // Temporary ID
       role: 'user', 
-      content: input,
-      attachments: attachments.length > 0 ? [...attachments] : undefined
+      content: messageText,
+      attachments: attachments.length > 0 ? [...attachments] : undefined,
+      createdAt: new Date().toISOString()
     };
     
     const updatedMessages = [...messages, userMessage];
@@ -196,13 +185,15 @@ export default function ChatBot() {
       // Send the message using our API function
       const response = await sendChatMessage(
         chatId !== 'new' ? chatId : undefined, 
-        input
+        messageText
       );
       
       // Add bot response to chat
       const botMessage: Message = { 
+        id: response.id || `bot-${Date.now()}`,
         role: 'assistant', 
-        content: response.response
+        content: response.response,
+        createdAt: new Date().toISOString()
       };
       
       const finalMessages = [...updatedMessages, botMessage];
@@ -216,7 +207,14 @@ export default function ChatBot() {
       
     } catch (error) {
       console.error('Error:', error);
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+      // Remove the user message and add error message
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        createdAt: new Date().toISOString()
+      };
+      setMessages([...messages, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -225,151 +223,113 @@ export default function ChatBot() {
   return (
     <div className="flex flex-col h-full mx-auto rounded-lg overflow-hidden flex-1">
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center gap-6 p-6">
-            {/* Logo */}
-            <Image
-              src="/logo.svg"
-              alt="Vonders Logo"
-              width={100}
-              height={100}
-            />
-
-            {/* Heading */}
-            <h1 className="mb-4 font-medium text-4xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-200 bg-clip-text text-transparent">
-              Welcome to your Vonder assistant
-            </h1>
-
-            {/* Feature Cards Container */}
-            <div className="hidden lg:flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-5xl">
-              {/* Card 1 */}
-              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                <Image
-                  src="/icon/culture.png"
-                  alt="Cultural Explorer Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-lg"
-                />
-                <h2 className="text-lg font-semibold">Cultural Explorer</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Provides detailed but easy-to-read information about Vietnamese culture.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                <Image
-                  src="/icon/pilgrim.png"
-                  alt="Attraction Curator Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-lg"
-                />
-                <h2 className="text-lg font-semibold">Attraction Curator</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Recommends top tourist attractions based on your preferences.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="flex flex-col items-center justify-center text-center gap-3 border-2 border-gray-200 dark:border-gray-800 rounded-lg p-6 w-full max-w-xs">
-                <Image
-                  src="/icon/schedule.png"
-                  alt="Smart Trip Planner Icon"
-                  width={40}
-                  height={40}
-                  className="rounded-lg"
-                />
-                <h2 className="text-lg font-semibold">Smart Trip Planner</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Create a customized daily travel schedule based on your interests, and trip duration.
-                </p>
-              </div>
-            </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {isLoadingMessages ? (
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+            <MessageSquare className="h-12 w-12 mb-2" />
+            <p>Start a conversation</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {messages.map((msg, index) => (
-              <div 
-                key={index}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          messages.map((message, index) => (
+            <div
+              key={message.id || index}
+              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  message.role === 'user'
+                    ? 'bg-cyan-400 text-white'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
               >
-                <div 
-                  className={`max-w-3/4 rounded-lg px-4 py-2 ${
-                    msg.role === 'user' 
-                      ? 'bg-cyan-400 text-white rounded-br-none' 
-                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
-                  }`}
-                >
-                  {msg.content}
-                  
-                  {/* Display attachments if any */}
-                  {msg.attachments && msg.attachments.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      {msg.attachments.map(attachment => (
-                        <div key={attachment.id} className="relative">
-                          {attachment.type.startsWith('image/') && (
-                            <Image
-                              src={attachment.url} 
-                              alt={attachment.name}
-                              width={300}
-                              height={200}
-                              className="max-w-full rounded border"
-                            />
-                          )}
-                          <div className={`text-xs mt-1 ${msg.role === 'user' ? 'text-cyan-100' : 'text-gray-500'}`}>
-                            {attachment.name}
+                <p className="whitespace-pre-wrap">{message.content}</p>
+                {message.attachments && message.attachments.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {message.attachments.map((attachment) => (
+                      <div key={attachment.id} className="flex items-center space-x-2">
+                        {attachment.type.startsWith('image/') ? (
+                          <Image
+                            src={attachment.url}
+                            alt={attachment.name}
+                            width={200}
+                            height={200}
+                            className="rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <Paperclip className="h-4 w-4" />
+                            <span className="text-sm">{attachment.name}</span>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none max-w-3/4 px-4 py-2">
-                  <div className="flex space-x-1 items-center">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-0"></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-400"></div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                </div>
+                )}
+                {message.createdAt && (
+                  <p className="text-xs opacity-70 mt-1">
+                    {new Date(message.createdAt).toLocaleTimeString()}
+                  </p>
+                )}
               </div>
-            )}
-            <div ref={messagesEndRef}/>
+            </div>
+          ))
+        )}
+        
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 text-gray-800 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                <span>Thinking...</span>
+              </div>
+            </div>
           </div>
         )}
+        
+        {/* Attachments preview */}
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg">
+            {attachments.map((attachment) => (
+              <div key={attachment.id} className="relative">
+                {attachment.type.startsWith('image/') ? (
+                  <div className="relative">
+                    <Image
+                      src={attachment.url}
+                      alt={attachment.name}
+                      width={80}
+                      height={80}
+                      className="rounded-lg object-cover"
+                    />
+                    <button
+                      onClick={() => removeAttachment(attachment.id)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 bg-white p-2 rounded border">
+                    <Paperclip className="h-4 w-4" />
+                    <span className="text-sm truncate max-w-[100px]">{attachment.name}</span>
+                    <button
+                      onClick={() => removeAttachment(attachment.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <div ref={messagesEndRef} />
       </div>
-
-      {/* Attachment preview area */}
-      {attachments.length > 0 && (
-        <div className="p-2 border-t bg-gray-50 flex flex-wrap gap-2">
-          {attachments.map(attachment => (
-            <div key={attachment.id} className="relative w-16 h-16 border rounded overflow-hidden bg-white">
-              {attachment.type.startsWith('image/') && (
-                <Image
-                  src={attachment.url} 
-                  alt={attachment.name}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                />
-              )}
-              <button 
-                title="remove attachment"
-                onClick={() => removeAttachment(attachment.id)}
-                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
-              >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Chat input */}
       <form onSubmit={handleSubmit} className="p-4 border-t flex">

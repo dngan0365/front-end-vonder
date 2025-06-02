@@ -6,11 +6,9 @@ export default function NormalUserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <div className="flex flex-col min-h-screen">
-        
-        <Navbar />
-        
+    <>      
+      {/* Main Layout */}
+      <div className="flex flex-col min-h-screen">        
         <main className="flex-1">
           {children}
         </main>

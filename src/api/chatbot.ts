@@ -1,3 +1,6 @@
+// Updated API functions for chatbot
+// File: api/chatbot.ts
+
 import axiosInstanceAI from "./ai_axiosInstance";
 
 // Consolidated ChatSession interface to match component requirements
@@ -36,14 +39,13 @@ export const getChatSessions = async () => {
   console.log('Starting getChatSessions call');
   try {
     const response = await axiosInstanceAI.get('/ai/chatbot/history');
-    console.log(response)
     console.log('Raw response data:', response.data);
     
     // Transform the backend response to match our frontend format
     const chats: ChatSession[] = response.data.map((session: any) => ({
       id: session.id,
-      title: session.title || 'Untitled Chat', // Provide default title if missing
-      lastMessage: session.lastMessage || 'No messages yet', // Provide default message if missing
+      title: session.title || 'Untitled Chat',
+      lastMessage: session.lastMessage || 'No messages yet',
       timestamp: new Date(session.updatedAt),
       createdAt: new Date(session.createdAt),
       updatedAt: new Date(session.updatedAt),
@@ -53,28 +55,41 @@ export const getChatSessions = async () => {
     return { chats };
   } catch (error) {
     console.error('Error fetching chat sessions:', error);
-    // Return empty array to prevent component crashes
     return { chats: [] };
   }
 };
 
+/**
+ * Delete a chat session
+ */
 export const deleteChatSession = async (sessionId: string) => {
-  console.log('Deleting a chat session')
+  console.log('Deleting chat session:', sessionId);
   try {
     const response = await axiosInstanceAI.delete(`/ai/chatbot/history/${sessionId}`);
+    console.log('Delete response:', response.data);
+    return response.data;
   } catch (error) {
-    console.error('Error deleting chat session')
+    console.error('Error deleting chat session:', error);
+    throw error;
   }
-}
+};
 
-export const editChatSessionTitle = async (sessionId: string) => {
-  console.log('Editing the chat session')
+/**
+ * Edit chat session title
+ */
+export const editChatSessionTitle = async (sessionId: string, title: string) => {
+  console.log('Editing chat session title:', sessionId, title);
   try {
-    const response = await axiosInstanceAI.put(`/ai/chatbot/history/${sessionId}`)
-  } catch(error) {
-    console.error('Error editing title')
+    const response = await axiosInstanceAI.put(`/ai/chatbot/history/${sessionId}`, {
+      title
+    });
+    console.log('Edit title response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error editing title:', error);
+    throw error;
   }
-}
+};
 
 /**
  * Get messages for a specific chat session
@@ -84,27 +99,31 @@ export const getChatMessages = async (sessionId: string) => {
   try {
     const response = await axiosInstanceAI.get(`/ai/chatbot/history/${sessionId}`);
     console.log('Messages received:', response.data);
-    return response.data;
+    
+    // Transform messages to match frontend format
+    const messages = response.data.map((message: any) => ({
+      id: message.id,
+      role: message.role,
+      content: message.content,
+      createdAt: message.createdAt
+    }));
+    
+    return messages;
   } catch (error) {
     console.error(`Error fetching chat messages for session ${sessionId}:`, error);
-    // Return empty array to prevent component crashes
     return [];
   }
 };
-
-
 
 /**
  * Send a chat message
  * @param sessionId Optional session ID for existing conversations
  * @param message Message text to send
  */
-
-
 export const sendChatMessage = async (
   sessionId: string | undefined, 
   message: string
-) => {
+): Promise<ChatResponse> => {
   console.log(`Sending message${sessionId ? ` to session ${sessionId}` : ' (new session)'}`);
   try {
     const payload = {
@@ -118,22 +137,24 @@ export const sendChatMessage = async (
     return response.data;
   } catch (error) {
     console.error('Error sending message:', error);
-    // Throw the error to let the component handle it
     throw error;
   }
 };
 
-
-export const createChatSession = async(ChatMessage) => {
-  console.log('Create a new chat session');
+/**
+ * Create a new chat session
+ */
+export const createChatSession = async () => {
+  console.log('Creating a new chat session');
   try {
-    const response = await axiosInstanceAI.post('/ai/chatbot/create')
-  }catch (error) {
-    console.error('Error fetching chat sessions:', error);
-    // Return empty array to prevent component crashes
-    return { chats: [] };
+    const response = await axiosInstanceAI.post('/ai/chatbot/create');
+    console.log('Created new chat session:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating chat session:', error);
+    throw error;
   }
-}
+};
 
 /**
  * Refresh the chatbot knowledge index (admin only)

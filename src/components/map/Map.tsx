@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -12,21 +12,32 @@ import {
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import Script from "next/script";
-import geojsonData from "./custom.geo.json"; // Load Vietnam shape
-import MapLayout from "@/app/[locale]/(guest)/map/layout";
-import popupData from "./popup-data.json";
+import geojsonData from "./custom.geo.json";
+import { getAllLocations } from "@/api/location"; // Update with correct path
 
-//the type of varibles in pop up data
-type PopupData = {
-  lat: number;
-  lng: number;
-  title: string;
+// Types based on your API response
+interface Location {
+  id: string;
+  name: string;
   description: string;
-  time: string; //format "dd/MM" work like a string
-};
+  coverImage: string;
+  category: "historical" | "cultural" | "natural" | "urban";
+  province: string;
+  district: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
-//function use for controlling the drag action if the user zoom in
+interface SearchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+}
+
+// Function for controlling drag action when user zooms
 function DragControl() {
   const map = useMap();
 
@@ -46,8 +57,37 @@ function DragControl() {
   return null;
 }
 
-export default function MyMap(props: any) {
-  const { position, zoom } = props;
+interface MyMapProps {
+  position: [number, number];
+  zoom: number;
+  searchParams?: SearchParams;
+}
+
+export default function MyMap({ position, zoom, searchParams = {} }: MyMapProps) {
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch locations from API
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllLocations({
+          limit: 100, // Get more locations for the map
+          ...searchParams
+        });
+        setLocations(response.data);
+      } catch (err) {
+        setError("Failed to load locations");
+        console.error("Error fetching locations:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLocations();
+  }, [searchParams]);
 
   const overlayStyle = {
     fillColor: "black", // Color outside Vietnam
@@ -56,21 +96,87 @@ export default function MyMap(props: any) {
     weight: 1,
   };
 
-  function createPopup(item: PopupData, index: number) {
+  // Function to create popup for each location
+  function createLocationPopup(location: Location, index: number) {
+    // Skip locations with invalid coordinates
+    if (location.latitude === -1 || location.latitude === 0) {
+      return null;
+    }
+
+    // Strip HTML tags from description for popup display
+    const stripHtml = (html: string) => {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    };
+
+    const cleanDescription = stripHtml(location.description);
+    const truncatedDescription = cleanDescription.length > 150 
+      ? cleanDescription.substring(0, 150) + "..." 
+      : cleanDescription;
+
     return (
-      <Marker key={index} position={{ lat: item.lat, lng: item.lng }}>
-        <Popup>
-        <h2 className="font-bold">{item.title}</h2>
-        <p>{item.description}</p>
-        <a href={`/locations/cm910ngcg0005k5110e7n6mie`}>Xem sự kiện</a>
-        <p><strong>Event Time:</strong> {item.time}</p>
+      <Marker 
+        key={location.id} 
+        position={[location.latitude, location.longitude]}
+      >
+        <Popup maxWidth={300}>
+          <div className="popup-content">
+            <h3 className="font-bold text-lg mb-2">{location.name}</h3>
+            {location.coverImage && (
+              <img 
+                src={location.coverImage} 
+                alt={location.name}
+                className="w-full h-32 object-cover rounded mb-2"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
+            <p className="text-sm mb-2">{truncatedDescription}</p>
+            <div className="text-xs text-gray-600 mb-2">
+              <span className="inline-block bg-blue-100 text-blue-600 px-2 py-1 rounded mr-1">
+                {location.category}
+              </span>
+              <span>{location.district}, {location.province}</span>
+            </div>
+            <a 
+              href={`/locations/${location.id}`}
+              className="inline-block bg-cyan-400 text-white px-3 py-1 rounded text-sm hover:bg-cyan-500 transition-colors"
+            >
+              Xem chi tiết
+            </a>
+          </div>
         </Popup>
       </Marker>
     );
   }
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="h-[800px] w-full flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>Đang tải bản đồ...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="h-[800px] w-full flex items-center justify-center bg-gray-100">
+        <div className="text-center text-red-600">
+          <p className="text-lg font-semibold mb-2">Lỗi tải dữ liệu</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    // it needs height and width for the map to show
     <MapContainer
       center={position}
       zoom={zoom}
@@ -84,30 +190,8 @@ export default function MyMap(props: any) {
         attribution="&copy; Thunderforest contributors"
       />
       
-      {popupData.map((item: PopupData, index: number) => {
-        // Get current date in "dd/MM" format
-        const today = new Date().toLocaleDateString("en-GB"); // 'en-GB' gives "dd/MM/yyyy" format
-        const currentDate = today.slice(0, 5);
-        // destructering 
-        // string method split
-        // map array method 
-        // call back function
-        const [currentDay, currentMonth] = currentDate.split('/').map(Number); //constructor
-        const [eventDay, eventMonth] = item.time.split('/').map(Number);
-      
-        const thisYear = new Date().getFullYear();
-
-        // convert to date object
-        const currentDateObj = new Date(thisYear, currentMonth - 1, currentDay); 
-        const eventDateObj = new Date(thisYear, eventMonth - 1, eventDay);
-
-        // Check if event date is today
-        if (currentDateObj <= eventDateObj) {
-          return createPopup(item, index); // Display popup if event is today
-        } else {
-          return null; // 1. "null"-object know type but no value  2."undefined" no type, no value - class object 3."NaN" not a number- type number but no value
-        }
-      })}
+      {/* Render location markers */}
+      {locations.map((location, index) => createLocationPopup(location, index))}
 
       <GeoJSON data={geojsonData} style={overlayStyle} />
       <DragControl />

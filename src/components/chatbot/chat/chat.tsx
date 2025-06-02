@@ -31,10 +31,7 @@ type Chat = {
 };
 
 export default function ChatBot() {
-  const router = useRouter();
-  const params = useParams();
-  const chatId = params?.id as string;
-  
+  const router = useRouter();  
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +40,11 @@ export default function ChatBot() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -128,16 +130,72 @@ export default function ChatBot() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() === '' && attachments.length === 0) return;
+    if (isLoading) return;
 
-    // Add user message to chat
-    const userMessage: Message = { 
-      role: 'user', 
-      content: input,
-      attachments: attachments.length > 0 ? [...attachments] : undefined
-    };
+    setIsLoading(true);
 
-    router.push(`/chat/${response.sessionId}`, { scroll: false });
+    try {
+      // Add user message to chat immediately for better UX
+      const userMessage: Message = { 
+        role: 'user', 
+        content: input,
+        attachments: attachments.length > 0 ? [...attachments] : undefined
+      };
 
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Clear input and attachments
+      const currentInput = input;
+      const currentAttachments = [...attachments];
+      setInput('');
+      setAttachments([]);
+
+      // Send message to API
+      const response = await sendChatMessage({
+        message: currentInput,
+        attachments: currentAttachments,
+        sessionId: currentChat?.id // Pass existing session ID if available
+      });
+
+      // Add assistant response to messages
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: response.message,
+        id: response.messageId,
+        createdAt: response.createdAt
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+
+      // If this is a new session, redirect to the session URL
+      if (!currentChat && response.sessionId) {
+        setCurrentChat({
+          id: response.sessionId,
+          title: currentInput.slice(0, 50) + (currentInput.length > 50 ? '...' : ''),
+          messages: [userMessage, assistantMessage],
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+        // Use replace to avoid adding to browser history for the initial redirect
+        router.replace(`/chat/${response.sessionId}`);
+      }
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Remove the user message that was optimistically added
+      setMessages(prev => prev.slice(0, -1));
+      
+      // Restore input and attachments
+      setInput(currentInput);
+      setAttachments(currentAttachments);
+      
+      // Show error message
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -211,7 +269,7 @@ export default function ChatBot() {
           <div className="space-y-4">
             {messages.map((msg, index) => (
               <div 
-                key={index}
+                key={msg.id || index}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div 
@@ -221,7 +279,7 @@ export default function ChatBot() {
                       : 'bg-gray-100 text-gray-800 rounded-bl-none'
                   }`}
                 >
-                  {msg.content}
+                  <div className="whitespace-pre-wrap">{msg.content}</div>
                   
                   {/* Display attachments if any */}
                   {msg.attachments && msg.attachments.length > 0 && (
@@ -280,7 +338,7 @@ export default function ChatBot() {
               <button 
                 title="remove attachment"
                 onClick={() => removeAttachment(attachment.id)}
-                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1 hover:bg-red-600 transition-colors"
               >
                 <X size={12} />
               </button>
@@ -309,7 +367,7 @@ export default function ChatBot() {
           onClick={() => fileInputRef.current?.click()}
           disabled={isLoading}
           title="Upload image"
-          className={`p-2 rounded-l-lg border border-r-0 ${
+          className={`p-2 rounded-l-lg border border-r-0 transition-colors ${
             isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#77DAE6]/10 hover:text-[#4ad4e4]'
           }`}
         >
@@ -332,7 +390,7 @@ export default function ChatBot() {
         <button
           type="submit"
           title="Send message"
-          className={`px-4 py-2 bg-cyan-400 text-white rounded-r-lg ${
+          className={`px-4 py-2 bg-cyan-400 text-white rounded-r-lg transition-colors ${
             (isLoading || (input.trim() === '' && attachments.length === 0))
               ? 'opacity-50 cursor-not-allowed' 
               : 'hover:bg-cyan-600'

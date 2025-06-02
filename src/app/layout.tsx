@@ -1,4 +1,3 @@
-import { AuthRedirect } from "@/components/auth/AuthRedirect";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
@@ -27,7 +26,6 @@ export default function RootLayout({
     <html className={`${beVietnamPro.className} ${roboto.className}`}>
       <body>
         <AuthProvider>
-          <AuthRedirect />
           {children}
           <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
         </AuthProvider>
