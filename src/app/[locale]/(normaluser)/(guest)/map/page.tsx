@@ -1,7 +1,10 @@
-// pages/map/page.tsx or wherever you want to use the map
+// pages/map/page.tsx
 "use client";
+import dynamic from "next/dynamic";
 import { useState } from "react";
-import MyMap from "@/components/map/Map"; // Update with correct path
+
+// 👇 dynamic import để tránh SSR
+const MyMap = dynamic(() => import("@/components/map/Map"), { ssr: false });
 
 export default function MapPage() {
   const [searchParams, setSearchParams] = useState({
@@ -51,7 +54,7 @@ export default function MapPage() {
 
       {/* Map Component */}
       <MyMap 
-        position={[16.5, 107.5]} // Center of Vietnam
+        position={[16.5, 107.5]}
         zoom={6}
         searchParams={searchParams}
       />
