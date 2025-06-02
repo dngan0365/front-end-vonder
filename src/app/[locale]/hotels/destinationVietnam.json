@@ -1,0 +1,317 @@
+[
+  {
+    "name": "Hà Nội",
+    "latitude": 21.0278,
+    "longitude": 105.8342
+  },
+  {
+    "name": "Hải Phòng",
+    "latitude": 20.8449,
+    "longitude": 106.6881
+  },
+  {
+    "name": "Đà Nẵng",
+    "latitude": 16.0544,
+    "longitude": 108.2022
+  },
+  {
+    "name": "Hồ Chí Minh",
+    "latitude": 10.8231,
+    "longitude": 106.6297
+  },
+  {
+    "name": "Cần Thơ",
+    "latitude": 10.0452,
+    "longitude": 105.7469
+  },
+  {
+    "name": "Huế",
+    "latitude": 16.4637,
+    "longitude": 107.5909
+  },
+  {
+    "name": "An Giang",
+    "latitude": 10.38,
+    "longitude": 105.4317
+  },
+  {
+    "name": "Bà Rịa–Vũng Tàu",
+    "latitude": 10.513,
+    "longitude": 107.153
+  },
+  {
+    "name": "Bắc Giang",
+    "latitude": 21.2711,
+    "longitude": 106.1945
+  },
+  {
+    "name": "Bắc Kạn",
+    "latitude": 22.1478,
+    "longitude": 105.8369
+  },
+  {
+    "name": "Bắc Ninh",
+    "latitude": 21.17,
+    "longitude": 106.0768
+  },
+  {
+    "name": "Bến Tre",
+    "latitude": 10.15,
+    "longitude": 106.3833
+  },
+  {
+    "name": "Bình Định",
+    "latitude": 13.7798,
+    "longitude": 109.2175
+  },
+  {
+    "name": "Bình Dương",
+    "latitude": 10.976,
+    "longitude": 106.6486
+  },
+  {
+    "name": "Bình Phước",
+    "latitude": 11.5412,
+    "longitude": 106.7945
+  },
+  {
+    "name": "Bình Thuận",
+    "latitude": 10.9289,
+    "longitude": 108.1003
+  },
+  {
+    "name": "Cà Mau",
+    "latitude": 9.1767,
+    "longitude": 105.1519
+  },
+  {
+    "name": "Cao Bằng",
+    "latitude": 22.6629,
+    "longitude": 106.25
+  },
+  {
+    "name": "Đắk Lắk",
+    "latitude": 12.6667,
+    "longitude": 108.05
+  },
+  {
+    "name": "Đắk Nông",
+    "latitude": 12.25,
+    "longitude": 107.43
+  },
+  {
+    "name": "Điện Biên",
+    "latitude": 21.3869,
+    "longitude": 103.0152
+  },
+  {
+    "name": "Đồng Nai",
+    "latitude": 10.9542,
+    "longitude": 106.8228
+  },
+  {
+    "name": "Đồng Tháp",
+    "latitude": 10.4686,
+    "longitude": 105.6328
+  },
+  {
+    "name": "Gia Lai",
+    "latitude": 13.9833,
+    "longitude": 108.0
+  },
+  {
+    "name": "Hà Giang",
+    "latitude": 22.8015,
+    "longitude": 104.9831
+  },
+  {
+    "name": "Hà Nam",
+    "latitude": 20.5383,
+    "longitude": 105.9075
+  },
+  {
+    "name": "Hà Tĩnh",
+    "latitude": 18.343,
+    "longitude": 105.9053
+  },
+  {
+    "name": "Hải Dương",
+    "latitude": 20.9405,
+    "longitude": 107.07
+  },
+  {
+    "name": "Hậu Giang",
+    "latitude": 9.7833,
+    "longitude": 105.4667
+  },
+  {
+    "name": "Hòa Bình",
+    "latitude": 20.8167,
+    "longitude": 105.35
+  },
+  {
+    "name": "Hưng Yên",
+    "latitude": 20.871,
+    "longitude": 106.34
+  },
+  {
+    "name": "Khánh Hòa",
+    "latitude": 12.2388,
+    "longitude": 109.1967
+  },
+  {
+    "name": "Kiên Giang",
+    "latitude": 10.0146,
+    "longitude": 105.0825
+  },
+  {
+    "name": "Kon Tum",
+    "latitude": 14.35,
+    "longitude": 107.9833
+  },
+  {
+    "name": "Lai Châu",
+    "latitude": 22.3768,
+    "longitude": 103.4703
+  },
+  {
+    "name": "Lâm Đồng",
+    "latitude": 11.9404,
+    "longitude": 108.4583
+  },
+  {
+    "name": "Lạng Sơn",
+    "latitude": 21.8451,
+    "longitude": 106.7597
+  },
+  {
+    "name": "Lào Cai",
+    "latitude": 22.4859,
+    "longitude": 103.9969
+  },
+  {
+    "name": "Long An",
+    "latitude": 10.5333,
+    "longitude": 106.4167
+  },
+  {
+    "name": "Nam Định",
+    "latitude": 20.427,
+    "longitude": 106.165
+  },
+  {
+    "name": "Nghệ An",
+    "latitude": 18.6783,
+    "longitude": 105.6814
+  },
+  {
+    "name": "Ninh Bình",
+    "latitude": 20.25,
+    "longitude": 105.975
+  },
+  {
+    "name": "Ninh Thuận",
+    "latitude": 11.565,
+    "longitude": 108.9931
+  },
+  {
+    "name": "Phú Thọ",
+    "latitude": 21.3212,
+    "longitude": 105.4303
+  },
+  {
+    "name": "Phú Yên",
+    "latitude": 13.095,
+    "longitude": 109.32
+  },
+  {
+    "name": "Quảng Bình",
+    "latitude": 17.467,
+    "longitude": 106.6
+  },
+  {
+    "name": "Quảng Nam",
+    "latitude": 15.5734,
+    "longitude": 108.478
+  },
+  {
+    "name": "Quảng Ngãi",
+    "latitude": 15.118,
+    "longitude": 108.7969
+  },
+  {
+    "name": "Quảng Ninh",
+    "latitude": 20.9517,
+    "longitude": 107.0844
+  },
+  {
+    "name": "Quảng Trị",
+    "latitude": 16.794,
+    "longitude": 107.096
+  },
+  {
+    "name": "Sóc Trăng",
+    "latitude": 9.6028,
+    "longitude": 105.9733
+  },
+  {
+    "name": "Sơn La",
+    "latitude": 21.325,
+    "longitude": 103.8968
+  },
+  {
+    "name": "Tây Ninh",
+    "latitude": 11.3159,
+    "longitude": 106.0974
+  },
+  {
+    "name": "Thái Bình",
+    "latitude": 20.4517,
+    "longitude": 106.3388
+  },
+  {
+    "name": "Thái Nguyên",
+    "latitude": 21.59,
+    "longitude": 105.8372
+  },
+  {
+    "name": "Thanh Hóa",
+    "latitude": 19.805,
+    "longitude": 105.7835
+  },
+  {
+    "name": "Thừa Thiên–Huế",
+    "latitude": 16.4637,
+    "longitude": 107.5909
+  },
+  {
+    "name": "Tiền Giang",
+    "latitude": 10.3573,
+    "longitude": 106.3635
+  },
+  {
+    "name": "Trà Vinh",
+    "latitude": 9.7276,
+    "longitude": 106.3559
+  },
+  {
+    "name": "Tuyên Quang",
+    "latitude": 21.8236,
+    "longitude": 105.2342
+  },
+  {
+    "name": "Vĩnh Long",
+    "latitude": 10.2448,
+    "longitude": 105.971
+  },
+  {
+    "name": "Vĩnh Phúc",
+    "latitude": 21.3117,
+    "longitude": 105.59
+  },
+  {
+    "name": "Yên Bái",
+    "latitude": 21.7134,
+    "longitude": 104.879
+  }
+]
