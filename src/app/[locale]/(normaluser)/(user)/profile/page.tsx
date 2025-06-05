@@ -233,7 +233,8 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
                 <Image
                   src={user.image}
                   alt={user.name}
-                  fill
+                  width="auto" // Width is auto (determined by className)
+                  height="auto" // Height is auto (determined by className)
                   sizes="96px"
                   style={{ objectFit: 'cover' }}
                   className="rounded-full"

@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from './cardRegion.module.css';
 import { useState } from 'react';
+import Link from 'next/link'
 
 interface Destination {
   id: number;
@@ -22,7 +23,7 @@ export default function CardRegion() {
       image: "/scenery/region-1.png",
       description: "Breathtaking landscapes, cultural heritage, and a blend of modern and traditional charm.",
       alt: "Hoan Kiem Lake in Hanoi, Northern Vietnam",
-      buttonColor: "text-gray-800"
+      buttonColor: "text-cyan-400"
     },
     {
       id: 2,
@@ -38,7 +39,7 @@ export default function CardRegion() {
       image: "/scenery/region-3.png",
       description: "Bustling cities, lush Mekong Delta, and historic wartime sites.",
       alt: "Ho Chi Minh statue and City Hall in Ho Chi Minh City, Southern Vietnam",
-      buttonColor: "text-gray-800"
+      buttonColor: "text-cyan-400"
     }
   ];
 
@@ -75,7 +76,7 @@ export default function CardRegion() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-6 py-12">
         <h1 className="text-4xl md:text-5xl font-bold text-center text-cyan-400 mb-12">
           Vietnam&apos;s Must-Visit Attractions
         </h1>
@@ -91,6 +92,7 @@ export default function CardRegion() {
                   src={destination.image}
                   alt={destination.alt}
                   fill
+                  priority
                   style={{ objectFit: 'cover' }}
                   className={styles.cardImage}
                 />
@@ -178,28 +180,30 @@ export default function CardRegion() {
             const key = regionKey as keyof typeof regions; // Explicitly type regionKey
             return (
               <div 
-                key={regionKey}
-                className={`mb-6 ${activeRegion === regionKey ? 'opacity-100' : 'opacity-80'} transition-opacity duration-300`}
-              >
-                <h2 className={`text-2xl font-bold mb-2 ${styles[regionKey]}`}>
-                  {regions[key].name}
-                  <span className="block w-16 h-1 mt-1 bg-cyan-400"></span>
-                </h2>
-                
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  {regions[key].cities.map((city: string) => (
-                    <div key={city} className="text-sm">
-                      {city}
-                    </div>
-                  ))}
-                </div>
-                
-                {activeRegion === regionKey && (
-                  <p className="text-base mt-2 animate-fadeIn">
-                    {regions[key].description}
-                  </p>
-                )}
-              </div>
+                  key={regionKey}
+                  className={`mb-6 ${activeRegion === regionKey ? 'opacity-100' : 'opacity-80'} transition-opacity duration-300`}
+                >
+                <Link href= "/explore">
+                  <h2 className={`text-2xl font-bold mb-2 ${styles[regionKey]}`}>
+                    {regions[key].name}
+                    <span className="block w-16 h-1 mt-1 bg-cyan-400"></span>
+                  </h2>
+                  
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    {regions[key].cities.map((city: string) => (
+                      <div key={city} className="text-sm">
+                        {city}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {activeRegion === regionKey && (
+                    <p className="text-base mt-2 animate-fadeIn">
+                      {regions[key].description}
+                    </p>
+                  )}
+              </Link>
+            </div>
             );
           })}
         </div>

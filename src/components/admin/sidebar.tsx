@@ -19,11 +19,11 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { 
-      path: '/admin/dashboard', 
-      name: t('profile'), 
-      icon: <FaUser className="text-lg" /> 
-    },
+    // { 
+    //   path: '/admin/dashboard', 
+    //   name: "Dashboard", 
+    //   icon: <FaUser className="text-lg" /> 
+    // },
     { 
       path: '/admin/location', 
       name: t('locations'), 

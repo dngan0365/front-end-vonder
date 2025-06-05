@@ -51,28 +51,55 @@ export interface UpdateTourDto {
   // Add other properties that can be updated
 }
 
+// Update your TourFilterParams interface
 export interface TourFilterParams {
-  page?: number
-  limit?: number
-  category?: string
-  province?: string
-  minPrice?: number
-  maxPrice?: number
-  duration?: string  // Add duration parameter
+  page?: number;
+  limit?: number;
+  category?: string;
+  province?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  duration?: string;
+  q?: string; // Add search parameter
 }
 
 import axiosInstance from "./axiosInstance"
 
 // API functions
-export const getTours = async (params: TourFilterParams = {}): Promise<Tour[]> => {
+// Updated API function to match your service response
+export const getTours = async (params: TourFilterParams = {}): Promise<{
+  tours: Tour[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}> => {
   try {
-    const response = await axiosInstance.get("/tours", { params })
-    return response.data.tours
+    const response = await axiosInstance.get("/tours", { params });
+    
+    // Transform the response to match expected format
+    const { tours, total, pages } = response.data;
+    const currentPage = params.page || 1;
+    const limit = params.limit || 12;
+    
+    return {
+      tours,
+      pagination: {
+        currentPage,
+        totalPages: pages,
+        totalItems: total,
+        hasNext: currentPage < pages,
+        hasPrev: currentPage > 1,
+      },
+    };
   } catch (error) {
-    console.error("Error fetching tours:", error)
-    throw error
+    console.error("Error fetching tours:", error);
+    throw error;
   }
-}
+};
 
 export const getTourById = async (id: string): Promise<Tour> => {
   try {

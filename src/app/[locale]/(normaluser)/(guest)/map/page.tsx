@@ -1,22 +1,62 @@
+// pages/map/page.tsx
 "use client";
-import { useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 
-export default function MyPage() {
-  const Map = useMemo(
-    () =>
-      dynamic(() => import("@/components/map/Map"), {
-        loading: () => <p>A map is loading</p>,
-        ssr: false,
-      }),
-    []
-  );
+// 👇 dynamic import để tránh SSR
+const MyMap = dynamic(() => import("@/components/map/Map"), { ssr: false });
+
+export default function MapPage() {
+  const [searchParams, setSearchParams] = useState({
+    category: 'all',
+    search: '',
+    limit: 100
+  });
+
+  const handleCategoryChange = (category: string) => {
+    setSearchParams(prev => ({ ...prev, category }));
+  };
+
+  const handleSearchChange = (search: string) => {
+    setSearchParams(prev => ({ ...prev, search }));
+  };
 
   return (
-    <div>
-      <Map
+    <div className="w-full">
+      {/* Filter Controls */}
+      <div className="bg-white p-4 shadow-sm border-b">
+        <div className="max-w-6xl mx-auto flex gap-4 items-center">
+          <div className="flex gap-2">
+            <select 
+              value={searchParams.category}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            >
+              <option value="all">Tất cả</option>
+              <option value="historical">Lịch sử</option>
+              <option value="cultural">Văn hóa</option>
+              <option value="natural">Tự nhiên</option>
+              <option value="urban">Đô thị</option>
+            </select>
+          </div>
+          
+          <div className="flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="Tìm kiếm địa điểm..."
+              value={searchParams.search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Map Component */}
+      <MyMap 
         position={[16.5, 107.5]}
         zoom={6}
+        searchParams={searchParams}
       />
     </div>
   );

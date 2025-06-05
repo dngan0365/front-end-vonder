@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
 import { AuthRefresher } from "@/components/auth/AuthRefresher";
+import Navbar from "@/components/navbar/navbar";
 
 // Language
 export function generateStaticParams() {
@@ -16,7 +17,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
@@ -27,7 +28,14 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale}>
       <AuthRefresher />
-      {children}
+      {/* Main Layout */}
+      <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <div className="flex-1">
+              {children}
+          </div>
+      </div>
+
     </NextIntlClientProvider>
   );
 }

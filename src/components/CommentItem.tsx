@@ -118,8 +118,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div className="py-4 border-b border-gray-100 dark:border-gray-700 last:border-0">
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <div className="bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
+        <div className="relative bg-gradient-to-br from-blue-400 to-teal-400 p-0.5 rounded-full">
           {comment.user?.image ? (
+
             <div className="w-8 h-8 rounded-full relative border-2 border-white overflow-hidden">
               <Image 
                 src={comment.user.image}

@@ -92,10 +92,10 @@ export function TourFilters({ className }: TourFiltersProps) {
 
       <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-6 shadow-sm border border-cyan-100">
         <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 mb-4">
-          Choose a place to go with your kids
+          Want to search more
         </h3>
 
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <a href="./flights" className="block">
             <div className="flex flex-col items-center p-4 rounded-xl bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500 hover:text-white text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 group">
               <Plane className="w-6 h-6 mb-2 text-cyan-500 group-hover:text-white" />
@@ -107,20 +107,6 @@ export function TourFilters({ className }: TourFiltersProps) {
             <div className="flex flex-col items-center p-4 rounded-xl bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500 hover:text-white text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 group">
               <Home className="w-6 h-6 mb-2 text-cyan-500 group-hover:text-white" />
               <span className="font-medium text-xs">Hotels</span>
-            </div>
-          </a>
-
-          <a href="./Activities" className="block">
-            <div className="flex flex-col items-center p-4 rounded-xl bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500 hover:text-white text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 group">
-              <MapPin className="w-6 h-6 mb-2 text-cyan-500 group-hover:text-white" />
-              <span className="font-medium text-xs">Activities</span>
-            </div>
-          </a>
-
-          <a href="./Family" className="block">
-            <div className="flex flex-col items-center p-4 rounded-xl bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500 hover:text-white text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 group">
-              <Users className="w-6 h-6 mb-2 text-cyan-500 group-hover:text-white" />
-              <span className="font-medium text-xs">Family</span>
             </div>
           </a>
         </div>

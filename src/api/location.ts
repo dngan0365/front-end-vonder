@@ -15,6 +15,27 @@ export interface Location {
   updatedAt: Date;
 }
 
+// Pagination response interface
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Search and pagination parameters
+export interface SearchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+}
+
 // Create a new location
 export const createLocation = async (locationData: Omit<Location, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
@@ -27,21 +48,32 @@ export const createLocation = async (locationData: Omit<Location, 'id' | 'create
 };
 
 // Enhanced getAllLocations with caching
-export const getAllLocations = async () => {
+export const getAllLocations = async (params: SearchParams = {}) => {
   try {
-    // Fetch fresh data
-    const response = await axiosInstance.get<Location[]>(`location`);
+    const { page = 1, limit = 10, search = '', category = 'all' } = params;
+    
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...(search && { search }),
+      ...(category !== 'all' && { category })
+    });
+
+    const response = await axiosInstance.get<PaginatedResponse<Location>>(
+      `location?${queryParams.toString()}`
+    );
     return response.data;
-    } catch {
-      console.warn('Using cached locations due to fetch error');
-    }
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    throw error;
+  }
 };
 
 // Get a single location by ID
 export const getLocationById = async (id: string) => {
   try {
     const response = await axiosInstance.get<Location>(`location/${id}`);
-    return response.data;
+    return response.data; 
   } catch (error) {
     console.error('Error fetching location:', error);
     throw error;
@@ -49,12 +81,24 @@ export const getLocationById = async (id: string) => {
 };
 
 // Get locations by category
-export const getLocationsByCategory = async (category: string) => {
+// Search locations with pagination
+export const searchLocations = async (searchTerm: string, params: SearchParams = {}) => {
   try {
-    const response = await axiosInstance.get<Location[]>(`location/category/${category}`);
+    const { page = 1, limit = 10, category = 'all' } = params;
+    
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      search: searchTerm,
+      ...(category !== 'all' && { category })
+    });
+
+    const response = await axiosInstance.get<PaginatedResponse<Location>>(
+      `location/search?${queryParams.toString()}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching locations by category:', error);
+    console.error('Error searching locations:', error);
     throw error;
   }
 };
@@ -116,13 +160,3 @@ export const removeFavoriteLocation = async (userId: string, locationId: string)
   }
 };
 
-export async function searchLocations(searchTerm: string) {
-  try {
-    const response = await axiosInstance.get(`location/search?term=${encodeURIComponent(searchTerm)}`);
-    console.log(response.data)
-    return response.data;
-  } catch (error) {
-    console.error('Error searching locations:', error);
-    throw error;
-  }
-}
