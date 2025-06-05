@@ -14,7 +14,7 @@ export default function CreateTourPage() {
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/agency/dashboard">
+            <BreadcrumbLink href="/agency/tours">
               <Home className="h-4 w-4" />
             </BreadcrumbLink>
           </BreadcrumbItem>

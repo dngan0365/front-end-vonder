@@ -31,7 +31,7 @@ export default function AgencyRegister() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/agency/dashboard');
+      router.push('/agency/tours');
     }
   }, [isAuthenticated, router]);
 
