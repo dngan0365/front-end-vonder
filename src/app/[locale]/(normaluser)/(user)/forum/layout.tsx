@@ -31,7 +31,7 @@ export default function ForumLayout({
   ]
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 h-[calc(100vh-65px)]">
       {/* Sidebar */}
       <aside className={`sticky top-16 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 h-[calc(100vh-65px)] flex flex-col ${isCollapsed ? 'w-16' : 'w-54'} transition-all duration-300`}>
         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">

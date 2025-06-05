@@ -132,3 +132,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.prose a {
+  @apply no-underline text-cyan-500 hover:underline;
+}

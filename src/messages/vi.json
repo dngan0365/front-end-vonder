@@ -260,5 +260,8 @@
         "deleteWarning": "Bạn có chắc chắn muốn xóa chuyến đi này? Hành động này không thể hoàn tác.",
         "cancel": "Hủy",
         "deleteTripError": "Không thể xóa chuyến đi. Vui lòng thử lại."
+    },
+    "Explore": {
+        "tryagain": "Thử lại"
     }
 }

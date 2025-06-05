@@ -34,7 +34,7 @@ export default function AgencyLogin() {
   return (
     <div className="flex h-full">
       {/* Left side - Image */}
-      <div className="hidden lg:block w-2/5 relative h-auto">
+      <div className="hidden lg:block w-3/5 relative h-auto">
         <Image
           src='/VietNamLogin.png'
           alt="Vietnam"

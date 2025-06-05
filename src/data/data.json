@@ -34,6 +34,7 @@
     "HA_GIANG",
     "HA_NAM",
     "HA_TINH",
+    "HA_NOI",
     "HAI_DUONG",
     "HAU_GIANG",
     "HOA_BINH",
@@ -74,6 +75,7 @@
     "HAI_PHONG",
     "DA_NANG",
     "HO_CHI_MINH",
-    "CAN_THO"
+    "CAN_THO",
+    "CA_MAU"
   ]
 }

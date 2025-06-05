@@ -177,7 +177,7 @@ export default function MyMap({ position, zoom, searchParams = {} }: MyMapProps)
   }
 
   return (
-    <MapContainer
+    <MapContainer 
       center={position}
       zoom={zoom}
       minZoom={zoom}
