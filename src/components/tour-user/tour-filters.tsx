@@ -103,7 +103,7 @@ export function TourFilters({ className }: TourFiltersProps) {
             </div>
           </a>
 
-          <a href="./Hotels" className="block">
+          <a href="./hotels" className="block">
             <div className="flex flex-col items-center p-4 rounded-xl bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-500 hover:text-white text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 group">
               <Home className="w-6 h-6 mb-2 text-cyan-500 group-hover:text-white" />
               <span className="font-medium text-xs">Hotels</span>
