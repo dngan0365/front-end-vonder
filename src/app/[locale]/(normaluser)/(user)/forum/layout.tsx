@@ -24,7 +24,7 @@ export default function ForumLayout({
   const navItems = [
     { name: 'Forum', href: '/forum', icon: <Home size={20} /> },
     { name: 'Create', href: '/forum/create', icon: <PenSquare size={20} /> },
-    // { name: 'Saved', href: '/forum/saved', icon: <Bookmark size={20} /> },
+    { name: 'Saved', href: '/forum/saved', icon: <Bookmark size={20} /> },
     // { name: 'Search', href: '/forum/search', icon: <Search size={20} /> },
     // { name: 'Game', href: '/forum/game', icon: <Gamepad2 size={20} /> },
     // { name: 'Profile', href: '/forum/profile', icon: <UserCircle size={20} /> },
@@ -52,7 +52,9 @@ export default function ForumLayout({
                 <Link 
                   href={item.href}
                   className={`flex items-center p-2 rounded-md hover:bg-[#77DAE6]/8 hover:text-[#4ad4e4] dark:hover:bg-slate-800 ${
-                    pathname.includes(item.href) ? 'bg-[#77DAE6]/10 text-[#4ad4e4] dark:bg-slate-800 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
+                    (pathname === item.href || (pathname.startsWith(item.href + '/') && item.href !== '/forum')) ? 
+                      'bg-[#77DAE6]/10 text-[#4ad4e4] dark:bg-slate-800 dark:text-blue-400' : 
+                      'text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   <span className="mr-3">{item.icon}</span>

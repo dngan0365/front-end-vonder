@@ -315,3 +315,64 @@ export const getUserVoteOnReply = async (replyId: string, userId: string) => {
     throw error;
   }
 };
+
+// BlogSave Types
+export interface BlogSave {
+  id: string;
+  userId: string;
+  blogId: string;
+  createdAt: string;
+  updatedAt: string;
+  blog: Blog;
+}
+
+// BlogSave API Functions
+export const saveBlog = async (blogId: string, userId: string) => {
+  try {
+    const response = await axiosInstance.post(`blog-saves/${blogId}/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error saving blog with ID ${blogId}:`, error);
+    throw error;
+  }
+};
+
+export const unsaveBlog = async (blogId: string, userId: string) => {
+  try {
+    const response = await axiosInstance.delete(`blog-saves/${blogId}/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error unsaving blog with ID ${blogId}:`, error);
+    throw error;
+  }
+};
+
+export const getUserSavedBlogs = async (userId: string) => {
+  try {
+    const response = await axiosInstance.get(`blog-saves/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user saved blogs:', error);
+    throw error;
+  }
+};
+
+export const checkIfBlogSaved = async (blogId: string, userId: string) => {
+  try {
+    const response = await axiosInstance.get(`blog-saves/${blogId}/status/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error checking if blog with ID ${blogId} is saved:`, error);
+    throw error;
+  }
+};
+
+export const getBlogSaveCount = async (blogId: string) => {
+  try {
+    const response = await axiosInstance.get(`blog-saves/count/${blogId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching save count for blog with ID ${blogId}:`, error);
+    throw error;
+  }
+};

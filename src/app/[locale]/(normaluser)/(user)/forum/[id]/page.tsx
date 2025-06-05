@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FiArrowLeft, FiCalendar, FiTag, FiThumbsUp, FiThumbsDown, FiMessageSquare, FiUser, FiSend } from 'react-icons/fi';
+import { FiArrowLeft, FiCalendar, FiTag, FiThumbsUp, FiThumbsDown, FiMessageSquare, FiUser, FiSend, FiHeart, FiBookmark } from 'react-icons/fi';
+import { FaHeart, FaBookmark } from 'react-icons/fa';
 import { useParams } from 'next/navigation';
-import { Blog, BlogVoteType, CreateReplyDto, ReplyVoteType } from '@/api/forum';
+import { Blog, BlogVoteType, CreateReplyDto, ReplyVoteType, saveBlog, unsaveBlog, checkIfBlogSaved } from '@/api/forum';
 import { useBlog } from '@/hooks/useBlog';
 import { useComments } from '@/hooks/useComments';
 import { useAuth } from '@/context/AuthContext';
@@ -18,7 +19,17 @@ export default function BlogPostDetail() {
   const { user } = useAuth();
   const userId = user?.id;
 
-  const { blog, isLoading, error, fetchBlogById, voteBlogPost, getUserVote } = useBlog();
+  const { 
+    blog, 
+    isLoading, 
+    error, 
+    fetchBlogById, 
+    voteBlogPost, 
+    getUserVote,
+    saveBlogPost,
+    unsaveBlogPost,
+    checkSaveStatus 
+  } = useBlog();
   const { 
     comments, 
     isLoading: commentsLoading,
@@ -53,6 +64,11 @@ export default function BlogPostDetail() {
     upvotes: number;
     downvotes: number;
   }>({ upvotes: 0, downvotes: 0 });
+
+  // Add these states for save functionality
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveCount, setSaveCount] = useState<number>(0);
 
   useEffect(() => {
     if (blogId) {
@@ -216,6 +232,25 @@ export default function BlogPostDetail() {
       setUserReplyVotesMap(emptyUserVotes);
     }
   }, [comments, userId, getUserReplyVote]);
+
+  // Add this effect to check if blog is saved
+  useEffect(() => {
+    async function checkBlogSaveStatus() {
+      if (!blogId || !userId) {
+        setIsSaved(false);
+        return;
+      }
+
+      try {
+        const saved = await checkSaveStatus(blogId, userId);
+        setIsSaved(saved);
+      } catch (error) {
+        console.error('Error checking blog save status:', error);
+      }
+    }
+
+    checkBlogSaveStatus();
+  }, [blogId, userId, checkSaveStatus]);
 
   const handleVote = async (voteType: 'UP' | 'DOWN') => {
     if (!userId) {
@@ -481,6 +516,30 @@ export default function BlogPostDetail() {
     }
   };
 
+  // Add this function to handle save/unsave
+  const handleSaveToggle = async () => {
+    if (!userId) {
+      alert('Please sign in to save this blog');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      if (isSaved) {
+        await unsaveBlogPost(blogId, userId);
+        setSaveCount(prev => Math.max(0, prev - 1));
+      } else {
+        await saveBlogPost(blogId, userId);
+        setSaveCount(prev => prev + 1);
+      }
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error('Error toggling save status:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto py-20 flex justify-center">
@@ -597,6 +656,27 @@ export default function BlogPostDetail() {
               >
                 <FiThumbsDown className={`mr-2 ${userVote === 'DOWN' ? 'fill-red-600 dark:fill-red-300' : ''}`} />
                 <span className="font-medium">{localVoteCounts.downvotes}</span>
+              </button>
+              
+              {/* Save Button */}
+              <button
+                onClick={handleSaveToggle}
+                disabled={isSaving || !userId}
+                className={`flex items-center px-4 py-2 rounded-full transition-all ${
+                  isSaved
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 border border-red-200 dark:border-red-700'
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+                aria-label={isSaved ? "Unsave" : "Save"}
+              >
+                {isSaving ? (
+                  <div className="w-4 h-4 mr-2 border-2 border-t-transparent border-current rounded-full animate-spin"></div>
+                ) : isSaved ? (
+                  <FaHeart className="mr-2 text-red-500" />
+                ) : (
+                  <FiHeart className="mr-2" />
+                )}
+                <span className="font-medium">{isSaved ? 'Saved' : 'Save'}</span>
               </button>
             </div>
             
