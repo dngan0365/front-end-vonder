@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { getEventsByMonth } from '@/api/event'; // Adjust import path as needed
 import Pagination from '../ui/pagination'; // Adjust import path as needed
 
@@ -177,42 +178,44 @@ export default function EventList() {
           {events.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event) => (
-                <div key={event.id} className="bg-white rounded-lg overflow-hidden shadow-md">
-                  <div className="h-64 relative">
-                    <div className="w-full h-full bg-blue-600 relative">
-                      <Image 
-                        src={event.coverImage} 
-                        alt={event.name}
-                        fill
-                        className="object-cover"
+                <div key={event.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <Link href={`/event/${event.id}`} className="block">
+                    <div className="h-64 relative">
+                      <div className="w-full h-full bg-blue-600 relative">
+                        <Image 
+                          src={event.coverImage} 
+                          alt={event.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="p-4 text-center">
+                      <h3 className="text-2xl font-bold mb-2 hover:text-cyan-600 transition-colors">{event.name}</h3>
+                      <p className="text-gray-500 text-sm mb-2">
+                        {new Date(event.startDate).toLocaleDateString('en-GB', { 
+                          day: '2-digit', 
+                          month: 'short', 
+                          year: 'numeric' 
+                        })} - 
+                        {
+                          new Date(event.endDate).toLocaleTimeString('en-GB', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })
+                        }
+                      </p> 
+                      <div
+                        className="text-gray-600 mb-4 line-clamp-3 overflow-hidden"
+                        dangerouslySetInnerHTML={{ __html: event.description }}
                       />
+                      <div className="text-right">
+                        <span className="text-gray-800 hover:text-cyan-600 transition-colors">
+                          Detail
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-4 text-center">
-                    <h3 className="text-2xl font-bold mb-2">{event.name}</h3>
-                    <p className="text-gray-500 text-sm mb-2">
-                      {new Date(event.startDate).toLocaleDateString('en-GB', { 
-                        day: '2-digit', 
-                        month: 'short', 
-                        year: 'numeric' 
-                      })} - 
-                      {
-                        new Date(event.endDate).toLocaleTimeString('en-GB', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })
-                      }
-                    </p> 
-                    <div
-                      className="text-gray-600 mb-4 line-clamp-3 overflow-hidden"
-                      dangerouslySetInnerHTML={{ __html: event.description }}
-                    />
-                    <div className="text-right">
-                      <button className="text-gray-800 hover:text-cyan-600 transition-colors">
-                        Detail
-                      </button>
-                    </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>
