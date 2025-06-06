@@ -6,7 +6,6 @@ import BlogItem from '@/components/BlogItem';
 import { FiAlertCircle, FiSearch, FiFilter, FiMapPin, FiClock } from 'react-icons/fi';
 import { LuNewspaper } from 'react-icons/lu';
 import data from '@/data/data.json';
-
 const ForumPage = () => {
   const { blogs, isLoading, error, fetchBlogs } = useBlog();
   const [mounted, setMounted] = useState(false);
@@ -42,8 +41,10 @@ const ForumPage = () => {
   if (!mounted) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-
+    <div className="max-w-5xl mx-auto py-8 px-4">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        Travel Forum
+      </h1>
       {/* Error Message */}
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-6 py-4 rounded-lg mb-8 flex items-center shadow-sm">

@@ -11,7 +11,11 @@ import {
   deleteBlog,
   voteBlog,
   getBlogVoteSummary,
-  getUserVoteOnBlog
+  getUserVoteOnBlog,
+  saveBlog,
+  unsaveBlog,
+  checkIfBlogSaved,
+  getBlogSaveCount
 } from '@/api/forum';
 
 interface UseBlogReturn {
@@ -27,6 +31,12 @@ interface UseBlogReturn {
   voteBlogPost: (blogId: string, userId: string, voteType: BlogVoteType) => Promise<void>;
   getVoteSummary: (blogId: string) => Promise<{ upvotes: number; downvotes: number; total: number }>;
   getUserVote: (blogId: string, userId: string) => Promise<{ type: 'UP' | 'DOWN' | null }>;
+
+  // New save blog functions
+  saveBlogPost: (blogId: string, userId: string) => Promise<void>;
+  unsaveBlogPost: (blogId: string, userId: string) => Promise<void>;
+  checkSaveStatus: (blogId: string, userId: string) => Promise<boolean>;
+  getSaveCount: (blogId: string) => Promise<number>;
 }
 
 export const useBlog = (): UseBlogReturn => {
@@ -142,6 +152,47 @@ export const useBlog = (): UseBlogReturn => {
     }
   }, []);
 
+  // New functions for blog save functionality
+  const saveBlogPost = useCallback(async (blogId: string, userId: string) => {
+    try {
+      await saveBlog(blogId, userId);
+    } catch (err) {
+      setError(`Failed to save blog with ID ${blogId}`);
+      console.error(err);
+      throw err;
+    }
+  }, []);
+
+  const unsaveBlogPost = useCallback(async (blogId: string, userId: string) => {
+    try {
+      await unsaveBlog(blogId, userId);
+    } catch (err) {
+      setError(`Failed to unsave blog with ID ${blogId}`);
+      console.error(err);
+      throw err;
+    }
+  }, []);
+
+  const checkSaveStatus = useCallback(async (blogId: string, userId: string) => {
+    try {
+      const response = await checkIfBlogSaved(blogId, userId);
+      return response.isSaved;
+    } catch (err) {
+      console.error(`Failed to check save status for blog with ID ${blogId}:`, err);
+      return false;
+    }
+  }, []);
+
+  const getSaveCount = useCallback(async (blogId: string) => {
+    try {
+      const response = await getBlogSaveCount(blogId);
+      return response.count;
+    } catch (err) {
+      console.error(`Failed to get save count for blog with ID ${blogId}:`, err);
+      return 0;
+    }
+  }, []);
+
   return {
     blogs,
     blog,
@@ -154,6 +205,11 @@ export const useBlog = (): UseBlogReturn => {
     removeBlog,
     voteBlogPost,
     getVoteSummary,
-    getUserVote
+    getUserVote,
+    // Return new save blog functions
+    saveBlogPost,
+    unsaveBlogPost,
+    checkSaveStatus,
+    getSaveCount
   };
 };

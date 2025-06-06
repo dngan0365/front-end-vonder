@@ -36,19 +36,19 @@ export default function AdminEvents() {
   const yearOptions = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
   
   const monthOptions = [
-    { value: '', label: 'All Months' },
-    { value: '1', label: 'January' },
-    { value: '2', label: 'February' },
-    { value: '3', label: 'March' },
-    { value: '4', label: 'April' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'June' },
-    { value: '7', label: 'July' },
-    { value: '8', label: 'August' },
-    { value: '9', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
+    { value: '', label: t('all_months') },
+    { value: '1', label: t('month_1') },
+    { value: '2', label: t('month_2') },
+    { value: '3', label: t('month_3') },
+    { value: '4', label: t('month_4') },
+    { value: '5', label: t('month_5') },
+    { value: '6', label: t('month_6') },
+    { value: '7', label: t('month_7') },
+    { value: '8', label: t('month_8') },
+    { value: '9', label: t('month_9') },
+    { value: '10', label: t('month_10') },
+    { value: '11', label: t('month_11') },
+    { value: '12', label: t('month_12') },
   ];
 
   useEffect(() => {

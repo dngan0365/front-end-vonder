@@ -20,11 +20,6 @@ const Sidebar = () => {
 
   const menuItems = [
     { 
-      path: '/agency/dashboard', 
-      name: 'Dashboard', 
-      icon: <FaDashcube className="text-lg" /> 
-    },
-    { 
       path: '/agency/tours', 
       name: 'Tours', 
       icon: <FaList className="text-lg" /> 

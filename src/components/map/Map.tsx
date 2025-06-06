@@ -15,6 +15,13 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import geojsonData from "./custom.geo.json";
 import { getAllLocations } from "@/api/location"; // Update with correct path
 
+import { useAuth } from "@/context/AuthContext"
+// Translage Language
+import { usePathname, useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+
+
+
 // Types based on your API response
 interface Location {
   id: string;
@@ -64,6 +71,7 @@ interface MyMapProps {
 }
 
 export default function MyMap({ position, zoom, searchParams = {} }: MyMapProps) {
+  const t = useTranslations("Map");
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -158,7 +166,7 @@ export default function MyMap({ position, zoom, searchParams = {} }: MyMapProps)
       <div className="h-[800px] w-full flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Đang tải bản đồ...</p>
+          <p>{t('loadingMap')}</p>
         </div>
       </div>
     );

@@ -27,7 +27,7 @@ export function AuthRedirect() {
         if (user.role === 'ADMIN') {
           router.push('/admin/location');
         } else if (user.role === 'agency') {
-          router.push('/agency/dashboard');
+          router.push('/agency/tours');
         } else {
           router.push('/');
         }

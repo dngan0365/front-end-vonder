@@ -21,7 +21,7 @@ export default function AgencyLogin() {
   useEffect(() => {
     if (isAuthenticated && user && user.role === 'agency') {
       console.log('User is authenticated and is an agency');
-      router.push('/agency/dashboard');
+      router.push('/agency/tours');
     }
   }, [isAuthenticated, router, user]);
 

@@ -2,11 +2,13 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 // 👇 dynamic import để tránh SSR
 const MyMap = dynamic(() => import("@/components/map/Map"), { ssr: false });
 
 export default function MapPage() {
+  const t = useTranslations("Map");
   const [searchParams, setSearchParams] = useState({
     category: 'all',
     search: '',
@@ -32,18 +34,18 @@ export default function MapPage() {
               onChange={(e) => handleCategoryChange(e.target.value)}
               className="px-3 py-2 border rounded-md"
             >
-              <option value="all">Tất cả</option>
-              <option value="historical">Lịch sử</option>
-              <option value="cultural">Văn hóa</option>
-              <option value="natural">Tự nhiên</option>
-              <option value="urban">Đô thị</option>
+              <option value="all">{t('all')}</option>
+              <option value="historical">{t('historical')}</option>
+              <option value="cultural">{t('cultural')}</option>
+              <option value="natural">{t('natural')}</option>
+              <option value="urban">{t('urban')}</option>
             </select>
           </div>
           
           <div className="flex-1 max-w-md">
             <input
               type="text"
-              placeholder="Tìm kiếm địa điểm..."
+              placeholder={t('searchLocations')}
               value={searchParams.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full px-3 py-2 border rounded-md"
