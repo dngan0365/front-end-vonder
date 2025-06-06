@@ -35,14 +35,69 @@ export interface ChatResponse {
 /**
  * Get all chat sessions for the current user
  */
-export const getChatSessions = async () => {
-  console.log('Starting getChatSessions call');
+export interface ChatSession {
+  id: string;
+  title: string;
+  lastMessage: string;
+  timestamp: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+export interface ChatSessionsResponse {
+  data: ChatSession[];
+  pagination: PaginationInfo;
+}
+
+/**
+ * Get chat sessions with pagination
+ */
+export const getChatSessions = async (page: number = 1, limit: number = 20): Promise<ChatSessionsResponse> => {
+  console.log(`Starting getChatSessions call - page: ${page}, limit: ${limit}`);
   try {
-    const response = await axiosInstanceAI.get('/ai/chatbot/history');
+    const response = await axiosInstanceAI.get('/ai/chatbot/history', {
+      params: { page, limit }
+    });
     console.log('Raw response data:', response.data);
     
+    // Handle both old format (array) and new format (object with data and pagination)
+    let sessionsData, paginationData;
+    
+    if (Array.isArray(response.data)) {
+      // Old format - convert to new format
+      sessionsData = response.data;
+      paginationData = {
+        page: 1,
+        limit: sessionsData.length,
+        total: sessionsData.length,
+        total_pages: 1,
+        has_next: false,
+        has_prev: false
+      };
+    } else {
+      // New format with pagination
+      sessionsData = response.data.data || response.data;
+      paginationData = response.data.pagination || {
+        page: 1,
+        limit: sessionsData.length,
+        total: sessionsData.length,
+        total_pages: 1,
+        has_next: false,
+        has_prev: false
+      };
+    }
+    
     // Transform the backend response to match our frontend format
-    const chats: ChatSession[] = response.data.map((session: any) => ({
+    const chats: ChatSession[] = sessionsData.map((session: any) => ({
       id: session.id,
       title: session.title || 'Untitled Chat',
       lastMessage: session.lastMessage || 'No messages yet',
@@ -52,10 +107,25 @@ export const getChatSessions = async () => {
     }));
     
     console.log('Transformed chats:', chats);
-    return { chats };
+    console.log('Pagination info:', paginationData);
+    
+    return { 
+      data: chats, 
+      pagination: paginationData 
+    };
   } catch (error) {
     console.error('Error fetching chat sessions:', error);
-    return { chats: [] };
+    return { 
+      data: [], 
+      pagination: {
+        page: 1,
+        limit: 20,
+        total: 0,
+        total_pages: 0,
+        has_next: false,
+        has_prev: false
+      }
+    };
   }
 };
 
@@ -121,18 +191,24 @@ export const getChatMessages = async (sessionId: string) => {
  * @param message Message text to send
  */
 export const sendChatMessage = async (
-  sessionId: string | undefined, 
-  message: string
+  message: string, sessionId: string | undefined
 ): Promise<ChatResponse> => {
   console.log(`Sending message${sessionId ? ` to session ${sessionId}` : ' (new session)'}`);
+
+  // Declare the payload *without redeclaring its type inline*
+  const payload = {
+    message: message,
+    ...(sessionId ? { sessionId } : {})
+  };
+
+  console.log('Request payload:', payload);
+
   try {
-    const payload = {
-      message,
-      sessionId // The backend will use this if provided
-    };
-    console.log('Request payload:', payload);
-    
-    const response = await axiosInstanceAI.post('/ai/chatbot/chat', payload);
+    const response = await axiosInstanceAI.post('/ai/chatbot/chat', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
     console.log('Message sent successfully, response:', response.data);
     return response.data;
   } catch (error) {
@@ -141,32 +217,3 @@ export const sendChatMessage = async (
   }
 };
 
-/**
- * Create a new chat session
- */
-export const createChatSession = async () => {
-  console.log('Creating a new chat session');
-  try {
-    const response = await axiosInstanceAI.post('/ai/chatbot/create');
-    console.log('Created new chat session:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating chat session:', error);
-    throw error;
-  }
-};
-
-/**
- * Refresh the chatbot knowledge index (admin only)
- */
-export const refreshChatbotIndex = async () => {
-  console.log('Requesting index refresh');
-  try {
-    const response = await axiosInstanceAI.post('/ai/chatbot/refresh-index');
-    console.log('Index refresh response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error refreshing index:', error);
-    throw error;
-  }
-};

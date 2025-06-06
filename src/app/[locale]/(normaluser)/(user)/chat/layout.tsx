@@ -10,7 +10,7 @@ export default function ChatLayout({
     return (
         <div className="flex h-[calc(100vh-65px)]">
             <ChatList />
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 p-3 overflow-y-auto">
                 {children}
             </div>
         </div>

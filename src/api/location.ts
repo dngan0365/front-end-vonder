@@ -50,7 +50,7 @@ export const createLocation = async (locationData: Omit<Location, 'id' | 'create
 // Enhanced getAllLocations with caching
 export const getAllLocations = async (params: SearchParams = {}) => {
   try {
-    const { page = 1, limit = 10, search = '', category = 'all' } = params;
+    const { page = 1, limit = 6, search = '', category = 'all' } = params;
     
     const queryParams = new URLSearchParams({
       page: page.toString(),

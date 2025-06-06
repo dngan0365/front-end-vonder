@@ -115,6 +115,7 @@ export const getEventsByMonth = async (month: number, year: number, params: Sear
     const response = await axiosInstance.get<PaginatedResponse<Event>>(
       `event/month/${year}/${month}?${queryParams.toString()}`
     );
+    console.log('Fetched events for month:', month, 'year:', year, 'response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching events by month:', error);

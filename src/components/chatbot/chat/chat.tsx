@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { sendChatMessage, getChatMessages, ChatMessage as ApiChatMessage, ChatResponse } from '@/api/chatbot';
 import { ImageUploader } from '@/components/ui/ImageUploader';
+import ReactMarkdown from 'react-markdown';
 
 type Message = {
   id?: string;
@@ -153,7 +154,7 @@ export default function ChatBot() {
       // Send message to API
       const response = await sendChatMessage({
         message: currentInput,
-        attachments: currentAttachments,
+        // attachments: currentAttachments,
         sessionId: currentChat?.id // Pass existing session ID if available
       });
 
@@ -189,7 +190,7 @@ export default function ChatBot() {
       
       // Restore input and attachments
       setInput(currentInput);
-      setAttachments(currentAttachments);
+      // setAttachments(currentAttachments);
       
       // Show error message
       alert('Failed to send message. Please try again.');
@@ -348,7 +349,7 @@ export default function ChatBot() {
       )}
 
       {/* Chat input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t flex">
+      <form onSubmit={handleSubmit} className="p-2 border-t flex">
         {/* Hidden file input */}
         <input
           type="file"
@@ -381,7 +382,7 @@ export default function ChatBot() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="How can I help you? (Ctrl+Enter to send)"
-          className="chat-textarea flex-1 px-4 py-2 border border-l-0 resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-cyan-400 min-h-[40px] max-h-32"
+          className="chat-textarea flex-1 px-2 py-1 border border-l-0 resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-cyan-400 min-h-[40px] max-h-32"
           disabled={isLoading}
           rows={1}
         />

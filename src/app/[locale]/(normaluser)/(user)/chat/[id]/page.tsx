@@ -5,10 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { sendChatMessage, getChatMessages, ChatMessage as ApiChatMessage, ChatResponse } from '@/api/chatbot';
 import { ImageUploader } from '@/components/ui/ImageUploader';
+import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize';
 
 type Message = {
   id?: string;
-  role: 'customer' | 'assistant';
+  role: 'customer' | 'assistant' | 'user';
   content: string;
   attachments?: Attachment[];
   createdAt?: string;
@@ -183,10 +185,9 @@ export default function ChatBot() {
 
     try {
       // Send the message using our API function
-      const response = await sendChatMessage(
-        chatId !== 'new' ? chatId : undefined, 
-        messageText
-      );
+      const response = await sendChatMessage({
+        message: messageText,
+        sessionId: chatId !== 'new' ? chatId : undefined});
       
       // Add bot response to chat
       const botMessage: Message = { 
@@ -240,13 +241,17 @@ export default function ChatBot() {
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                className={`max-w-lg lg:max-w-xl px-4 py-2 rounded-lg ${
                   message.role === 'user'
                     ? 'bg-cyan-400 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+              <div className="prose prose-sm dark:prose-invert max-w-none prose-a:no-underline prose-a:text-blue-600 hover:prose-a:underline">
+                <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+                  {message.content}
+                </ReactMarkdown>
+              </div>
                 {message.attachments && message.attachments.length > 0 && (
                   <div className="mt-2 space-y-2">
                     {message.attachments.map((attachment) => (
