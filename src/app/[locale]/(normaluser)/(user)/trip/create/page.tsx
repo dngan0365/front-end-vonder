@@ -129,7 +129,7 @@ export default function CreateTripPage() {
           : [];
       
       // Add participants
-      const tripCreated = await Promise.all(participantsToAdd.map(participant => 
+      await Promise.all(participantsToAdd.map(participant => 
         addParticipant(newTrip.id, participant.id)
       ));
       

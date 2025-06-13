@@ -11,7 +11,6 @@ import {
 import { amenitiesConfig } from "./amenitiesConfig";
 import axios from "axios";
 import DestinationData from "./destinationVietnam.json";
-import Navbar from "@/components/navbar/navbar";
 
 // Types - you may need to adjust these based on your actual API types
 interface HotelSearchhotelData {
@@ -121,7 +120,7 @@ const HotelSearchFilter: React.FC = () => {
 
       setIsLoading(true);
       const response = await axios.get(
-        "http://localhost:3300/api/hotels/search",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/hotels/search`,
         {
           params: cleanParams,
         }
@@ -395,7 +394,6 @@ const HotelSearchFilter: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-600">
-      <Navbar />
       {/* Header Section */}
       <div className="text-center py-16 px-4">
         <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
