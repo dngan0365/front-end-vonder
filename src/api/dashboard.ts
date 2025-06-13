@@ -1,70 +1,196 @@
-import axiosInstanceAI from "./ai_axiosInstance";
+import axiosInstance from './axiosInstance'; // Assuming you have axios configured
 
-export interface ChatResponse {
-    response: string;
-    sources?: Array<{
-      title?: string;
-      content?: string;
-      url?: string;
-    }>;
-  }
-  
-  export interface ChatHistoryItem {
-    id: string;
-    role: string;
-    content: string;
-    createdAt: string;
-  }
-  
-  export interface ChatSession {
-    id: string;
-    title: string;
-    createdAt: string;
-    updatedAt: string;
-  }
-  // Create a singleton instance
+export interface DashboardStats {
+  totalUsers: number;
+  totalTours: number;
+  totalBookings: number;
+  totalRevenue: number;
+  totalLocations: number;
+  totalBlogs: number;
+  pendingBookings: number;
+  confirmedBookings: number;
+  activeAgencies: number;
+}
 
-  // Send a message to the chatbot
-  export const sendMessage = async (message: string)=> {
-    try {
-        const response = await axiosInstanceAI.post<ChatResponse>('/chatbot/chat', { message });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        throw error;
-      }
-  }
+export interface MonthlyData {
+  month: number;
+  monthName: string;
+  count?: number;
+  revenue?: number;
+}
 
-  // Get all chat sessions for the current user
-  export const getChatSessions = async (): Promise<ChatSession[]> => {
-    try {
-        const response = await axiosInstanceAI.get<ChatSession[]>('/chatbot/history');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        throw error;
-    }
-  }
+export interface LocationCategory {
+  category: string;
+  count: number;
+}
 
-  // Get messages for a specific chat session
-  export const getChatSessionMessages = async (sessionId: string): Promise<ChatHistoryItem[]> => {
-    try {
-        const response = await axiosInstanceAI.get<ChatHistoryItem[]>(`/chatbot/history/${sessionId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        throw error;
-    }
-  }
+export interface TopLocation {
+  id: string;
+  name: string;
+  province: string;
+  category: string;
+  totalEngagement: number;
+  _count: {
+    favorites: number;
+    trips: number;
+    tours: number;
+  };
+}
 
-  // Admin only: refresh the knowledge index
-  export const refreshIndex = async (): Promise<any> => {
-    try{
-        const response = await axiosInstanceAI.post('/chatbot/refresh-index');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching blogs:', error);
-        throw error;
-    }
-  }
+export interface RecentActivity {
+  id: string;
+  type: 'user_registration' | 'tour_booking' | 'blog_post' | 'tour_creation';
+  title: string;
+  description: string;
+  createdAt: string;
+}
 
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// Get dashboard statistics
+export const getDashboardStats = async (): Promise<ApiResponse<DashboardStats>> => {
+  try {
+    const response = await axiosInstance.get('/dashboard/stats');
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching dashboard stats:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch dashboard stats'
+    };
+  }
+};
+
+// Get monthly user statistics
+export const getUsersMonthlyStats = async (year?: number): Promise<ApiResponse<MonthlyData[]>> => {
+  try {
+    const params = year ? { year: year.toString() } : {};
+    const response = await axiosInstance.get('/dashboard/users/monthly', { params });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching users monthly stats:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch users monthly stats'
+    };
+  }
+};
+
+// Get monthly tour statistics
+export const getToursMonthlyStats = async (year?: number): Promise<ApiResponse<MonthlyData[]>> => {
+  try {
+    const params = year ? { year: year.toString() } : {};
+    const response = await axiosInstance.get('/dashboard/tours/monthly', { params });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching tours monthly stats:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch tours monthly stats'
+    };
+  }
+};
+
+// Get monthly booking statistics
+export const getBookingsMonthlyStats = async (year?: number): Promise<ApiResponse<MonthlyData[]>> => {
+  try {
+    const params = year ? { year: year.toString() } : {};
+    const response = await axiosInstance.get('/dashboard/bookings/monthly', { params });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching bookings monthly stats:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch bookings monthly stats'
+    };
+  }
+};
+
+// Get monthly revenue statistics
+export const getRevenueMonthlyStats = async (year?: number): Promise<ApiResponse<MonthlyData[]>> => {
+  try {
+    const params = year ? { year: year.toString() } : {};
+    const response = await axiosInstance.get('/dashboard/revenue/monthly', { params });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching revenue monthly stats:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch revenue monthly stats'
+    };
+  }
+};
+
+// Get locations by category
+export const getLocationsByCategory = async (): Promise<ApiResponse<LocationCategory[]>> => {
+  try {
+    const response = await axiosInstance.get('/dashboard/locations/by-category');
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching locations by category:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch locations by category'
+    };
+  }
+};
+
+// Get top locations
+export const getTopLocations = async (limit: number = 10): Promise<ApiResponse<TopLocation[]>> => {
+  try {
+    const response = await axiosInstance.get('/dashboard/top-locations', {
+      params: { limit: limit.toString() }
+    });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching top locations:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch top locations'
+    };
+  }
+};
+
+// Get recent activities
+export const getRecentActivities = async (limit: number = 20): Promise<ApiResponse<RecentActivity[]>> => {
+  try {
+    const response = await axiosInstance.get('/dashboard/recent-activities', {
+      params: { limit: limit.toString() }
+    });
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error: any) {
+    console.error('Error fetching recent activities:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to fetch recent activities'
+    };
+  }
+};

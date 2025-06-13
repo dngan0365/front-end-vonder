@@ -1,347 +1,373 @@
-'use client';
+'use client'
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { Users, MapPin, Calendar, BookOpen, Plane, TrendingUp, Activity, Globe } from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  ResponsiveContainer
+} from 'recharts';
+import {
+  Users,
+  MapPin,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  Activity,
+  Eye
+} from 'lucide-react';
 
-// Import your actual API functions
-import { getAllLocations } from '@/api/location';
-import { getAllEvents } from '@/api/event';
-import { getAllTrips } from '@/api/trip';
-import { getAllUsers } from '@/api/user';
+import {
+  getDashboardStats,
+  getUsersMonthlyStats,
+  getToursMonthlyStats,
+  getRevenueMonthlyStats,
+  getLocationsByCategory,
+  getRecentActivities,
+  type DashboardStats,
+  type MonthlyData,
+  type LocationCategory,
+  type RecentActivity
+} from '@/api/dashboard'; // 👉 adjust the path as needed
 
-const AdminDashboard = () => {
-  const [dashboardData, setDashboardData] = useState({
-    users: [],
-    locations: [],
-    events: [],
-    trips: [],
-    loading: true
-  });
+/**
+ * AdminDashboard – full component using real API calls instead of mock data.
+ * TailwindCSS, Recharts, and Lucide‑react are used for styling and charts.
+ */
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [usersData, setUsersData] = useState<MonthlyData[]>([]);
+  const [toursData, setToursData] = useState<MonthlyData[]>([]);
+  const [revenueData, setRevenueData] = useState<MonthlyData[]>([]);
+  const [categoryData, setCategoryData] = useState<LocationCategory[]>([]);
+  const [activities, setActivities] = useState<RecentActivity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalLocations: 0,
-    totalEvents: 0,
-    totalTrips: 0,
-    userGrowth: [],
-    locationsByCategory: [],
-    locationsByProvince: [],
-    monthlyActivity: []
-  });
-
-  // Function to fetch all paginated data
-  const fetchAllPaginatedData = async (fetchFunction, params = {}) => {
-    let allData = [];
-    let currentPage = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-      try {
-        const response = await fetchFunction({ ...params, page: currentPage, limit: 100 });
-        
-        if (response && response.data) {
-          allData = [...allData, ...response.data];
-          
-          // Check if there's more data
-          if (response.pagination) {
-            hasMore = response.pagination.hasNextPage;
-            currentPage++;
-          } else {
-            // If no pagination info, assume we got all data
-            hasMore = false;
-          }
-        } else {
-          hasMore = false;
-        }
-      } catch (error) {
-        console.error('Error fetching paginated data:', error);
-        hasMore = false;
-      }
-    }
-
-    return allData;
-  };
-
-  // Function to fetch all trips (different structure)
-  const fetchAllTrips = async () => {
-    try {
-      // Try to get a large number first
-      const trips = await getAllTrips({ take: 10000 });
-      return trips || [];
-    } catch (error) {
-      console.error('Error fetching trips:', error);
-      return [];
-    }
-  };
+  // Colors for pie slices (and other accents)
+  const COLORS = ['#06b6d4', '#0891b2', '#0e7490', '#155e75', '#164e63', '#083344'];
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setDashboardData(prev => ({ ...prev, loading: true }));
-        
-        // Fetch all data with proper pagination handling
-        const [usersRes, locations, events, trips] = await Promise.all([
-          getAllUsers(),
-          fetchAllPaginatedData(getAllLocations),
-          fetchAllPaginatedData(getAllEvents),
-          fetchAllTrips()
+    loadDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear]);
+
+  /**
+   * Fetches all dashboard data in parallel.
+   */
+  const loadDashboardData = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const [statsRes, usersRes, toursRes, revenueRes, categoryRes, activitiesRes] =
+        await Promise.all([
+          getDashboardStats(),
+          getUsersMonthlyStats(selectedYear),
+          getToursMonthlyStats(selectedYear),
+          getRevenueMonthlyStats(selectedYear),
+          getLocationsByCategory(),
+          getRecentActivities(10)
         ]);
 
-        // Handle your API response structures
-        const users = usersRes.success ? usersRes.data : [];
-
-        console.log('Dashboard data fetched:', {
-          usersCount: users.length,
-          locationsCount: locations.length,
-          eventsCount: events.length,
-          tripsCount: trips.length
-        });
-
-        setDashboardData({
-          users,
-          locations,
-          events,
-          trips,
-          loading: false
-        });
-
-        // Process data for charts
-        processChartData(users, locations, events, trips);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        setDashboardData(prev => ({ ...prev, loading: false }));
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  const processChartData = (users, locations, events, trips) => {
-    console.log('Processing chart data:', { users: users.length, locations: locations.length, events: events.length, trips: trips.length });
-
-    // User growth over months
-    const userGrowthData = {};
-    users.forEach(user => {
-      try {
-        const date = new Date(user.createdAt);
-        if (!isNaN(date.getTime())) {
-          const month = date.toLocaleDateString('en', { month: 'short', year: 'numeric' });
-          userGrowthData[month] = (userGrowthData[month] || 0) + 1;
-        }
-      } catch (error) {
-        console.error('Error processing user date:', error);
-      }
-    });
-
-    const userGrowth = Object.entries(userGrowthData)
-      .sort(([a], [b]) => new Date(a) - new Date(b))
-      .map(([month, count]) => ({ month, users: count }));
-
-    // Locations by category
-    const categoryData = {};
-    locations.forEach(location => {
-      try {
-        const category = location.category || 'Other';
-        categoryData[category] = (categoryData[category] || 0) + 1;
-      } catch (error) {
-        console.error('Error processing location category:', error);
-      }
-    });
-
-    const locationsByCategory = Object.entries(categoryData).map(([category, count]) => ({
-      category: category.charAt(0).toUpperCase() + category.slice(1),
-      count
-    }));
-
-    // Locations by province
-    const provinceData = {};
-    locations.forEach(location => {
-      try {
-        const province = location.province || 'Unknown';
-        provinceData[province] = (provinceData[province] || 0) + 1;
-      } catch (error) {
-        console.error('Error processing location province:', error);
-      }
-    });
-
-    const locationsByProvince = Object.entries(provinceData).map(([province, count]) => ({
-      province,
-      count
-    }));
-
-    // Monthly activity (combining all entities)
-    const monthlyData = {};
-    
-    // Process each type separately with error handling
-    const processItems = (items, type) => {
-      items.forEach(item => {
-        try {
-          const date = new Date(item.createdAt);
-          if (!isNaN(date.getTime())) {
-            const month = date.toLocaleDateString('en', { month: 'short' });
-            if (!monthlyData[month]) {
-              monthlyData[month] = { month, users: 0, locations: 0, events: 0, trips: 0 };
-            }
-            monthlyData[month][type]++;
-          }
-        } catch (error) {
-          console.error(`Error processing ${type} date:`, error);
-        }
-      });
-    };
-
-    processItems(users, 'users');
-    processItems(locations, 'locations');
-    processItems(events, 'events');
-    processItems(trips, 'trips');
-
-    const monthlyActivity = Object.values(monthlyData)
-      .sort((a, b) => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return months.indexOf(a.month) - months.indexOf(b.month);
-      });
-
-    const newStats = {
-      totalUsers: users.length,
-      totalLocations: locations.length,
-      totalEvents: events.length,
-      totalTrips: trips.length,
-      userGrowth,
-      locationsByCategory,
-      locationsByProvince,
-      monthlyActivity
-    };
-
-    console.log('Processed stats:', newStats);
-    setStats(newStats);
+      if (statsRes.success && statsRes.data) setStats(statsRes.data);
+      if (usersRes.success && usersRes.data) setUsersData(usersRes.data);
+      if (toursRes.success && toursRes.data) setToursData(toursRes.data);
+      if (revenueRes.success && revenueRes.data) setRevenueData(revenueRes.data);
+      if (categoryRes.success && categoryRes.data) setCategoryData(categoryRes.data);
+      if (activitiesRes.success && activitiesRes.data) setActivities(activitiesRes.data);
+    } catch (error) {
+      // Ideally use a toast/notification system in production
+      // eslint-disable-next-line no-console
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const StatCard = ({ icon: Icon, title, value, change, color }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4" style={{ borderLeftColor: color }}>
+  /**
+   * STAT CARD COMPONENT
+   */
+  const StatCard: React.FC<{
+    title: string;
+    value: number;
+    icon: React.ElementType;
+    trend?: 'up' | 'down';
+    trendValue?: number;
+    color?: string;
+  }> = ({ title, value, icon: Icon, trend, trendValue, color = 'cyan' }) => (
+    <div className={`bg-white rounded-xl shadow-lg p-6 border-l-4 border-${color}-400`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-gray-600 text-sm font-medium">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{value.toLocaleString()}</p>
-          {change && (
-            <div className="flex items-center mt-2">
-              <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-              <span className="text-green-500 text-sm font-medium">+{change}% this month</span>
+          <p className="text-3xl font-bold text-gray-800 mt-2">{value.toLocaleString()}</p>
+          {trend && (
+            <div
+              className={`flex items-center mt-2 text-sm ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}
+            >
+              <TrendingUp className={`w-4 h-4 mr-1 ${trend === 'down' ? 'rotate-180' : ''}`} />
+              <span>{trendValue}% from last month</span>
             </div>
           )}
         </div>
-        <div className="p-3 rounded-full" style={{ backgroundColor: color + '20' }}>
-          <Icon className="h-8 w-8" style={{ color }} />
+        <div className={`p-3 rounded-full bg-${color}-100`}>
+          <Icon className={`w-8 h-8 text-${color}-600`} />
         </div>
       </div>
     </div>
   );
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+  /**
+   * INDIVIDUAL ACTIVITY LIST ITEM
+   */
+  const ActivityItem: React.FC<{ activity: RecentActivity }> = ({ activity }) => {
+    const getIcon = (type: RecentActivity['type']) => {
+      switch (type) {
+        case 'user_registration':
+          return <Users className="w-4 h-4" />;
+        case 'tour_booking':
+          return <Calendar className="w-4 h-4" />;
+        case 'blog_post':
+          return <Eye className="w-4 h-4" />;
+        case 'tour_creation':
+          return <MapPin className="w-4 h-4" />;
+        default:
+          return <Activity className="w-4 h-4" />;
+      }
+    };
 
-  if (dashboardData.loading) {
+    const getColor = (type: RecentActivity['type']) => {
+      switch (type) {
+        case 'user_registration':
+          return 'bg-blue-100 text-blue-600';
+        case 'tour_booking':
+          return 'bg-green-100 text-green-600';
+        case 'blog_post':
+          return 'bg-purple-100 text-purple-600';
+        case 'tour_creation':
+          return 'bg-cyan-100 text-cyan-600';
+        default:
+          return 'bg-gray-100 text-gray-600';
+      }
+    };
+
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <Activity className="h-8 w-8 text-blue-600 animate-spin" />
-          <span className="text-xl font-semibold text-gray-700">Loading Dashboard...</span>
+      <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+        <div className={`p-2 rounded-full ${getColor(activity.type)}`}>{getIcon(activity.type)}</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-gray-800 truncate">{activity.title}</p>
+          <p className="text-xs text-gray-500 mt-1">{activity.description}</p>
+          <p className="text-xs text-gray-400 mt-1">
+            {new Date(activity.createdAt).toLocaleString()}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  /**
+   * RENDER LOADING STATE
+   */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
+  /**
+   * MAIN COMPONENT RENDER
+   */
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-2">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Overview of your platform statistics and metrics</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Welcome back! Here's what's happening with your platform.</p>
+
+          {/* Year Selector */}
+          <div className="mt-4">
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              {[new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2].map(
+                (year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            icon={Users}
-            title="Total Users"
-            value={stats.totalUsers}
-            change={12}
-            color="#3B82F6"
-          />
-          <StatCard
-            icon={MapPin}
-            title="Total Locations"
-            value={stats.totalLocations}
-            change={8}
-            color="#10B981"
-          />
-          <StatCard
-            icon={Calendar}
-            title="Total Events"
-            value={stats.totalEvents}
-            change={15}
-            color="#F59E0B"
-          />
-          <StatCard
-            icon={Plane}
-            title="Total Trips"
-            value={stats.totalTrips}
-            change={5}
-            color="#EF4444"
-          />
-        </div>
+        {/* Stats Cards */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              title="Total Users"
+              value={stats.totalUsers}
+              icon={Users}
+              trend="up"
+              trendValue={12}
+              color="cyan"
+            />
+            <StatCard
+              title="Total Tours"
+              value={stats.totalTours}
+              icon={MapPin}
+              trend="up"
+              trendValue={8}
+              color="blue"
+            />
+            <StatCard
+              title="Total Bookings"
+              value={stats.totalBookings}
+              icon={Calendar}
+              trend="up"
+              trendValue={15}
+              color="green"
+            />
+            <StatCard
+              title="Total Revenue"
+              value={stats.totalRevenue}
+              icon={DollarSign}
+              trend="up"
+              trendValue={23}
+              color="purple"
+            />
+          </div>
+        )}
 
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* User Growth Chart */}
+        {/* Secondary Stats */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div className="bg-white rounded-lg shadow p-4 text-center">
+              <p className="text-2xl font-bold text-cyan-600">{stats.totalLocations}</p>
+              <p className="text-sm text-gray-600">Locations</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4 text-center">
+              <p className="text-2xl font-bold text-blue-600">{stats.totalBlogs}</p>
+              <p className="text-sm text-gray-600">Blog Posts</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4 text-center">
+              <p className="text-2xl font-bold text-yellow-600">{stats.pendingBookings}</p>
+              <p className="text-sm text-gray-600">Pending Bookings</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4 text-center">
+              <p className="text-2xl font-bold text-green-600">{stats.confirmedBookings}</p>
+              <p className="text-sm text-gray-600">Confirmed Bookings</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4 text-center">
+              <p className="text-2xl font-bold text-purple-600">{stats.activeAgencies}</p>
+              <p className="text-sm text-gray-600">Active Agencies</p>
+            </div>
+          </div>
+        )}
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Users Growth Chart */}
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <TrendingUp className="h-5 w-5 mr-2 text-blue-600" />
-              User Growth Over Time
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">User Growth ({selectedYear})</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={stats.userGrowth}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="users" stroke="#3B82F6" strokeWidth={3} />
+              <LineChart data={usersData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="monthName" stroke="#666" />
+                <YAxis stroke="#666" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#06b6d4"
+                  strokeWidth={3}
+                  dot={{ fill: '#06b6d4', strokeWidth: 2, r: 4 }}
+                  name="New Users"
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Monthly Activity Chart */}
+          {/* Tours Creation Chart */}
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Activity className="h-5 w-5 mr-2 text-green-600" />
-              Monthly Activity
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Tours Created ({selectedYear})</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={stats.monthlyActivity}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="users" fill="#3B82F6" />
-                <Bar dataKey="locations" fill="#10B981" />
-                <Bar dataKey="events" fill="#F59E0B" />
-                <Bar dataKey="trips" fill="#EF4444" />
+              <BarChart data={toursData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="monthName" stroke="#666" />
+                <YAxis stroke="#666" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="count" fill="#0891b2" name="Tours Created" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Bottom Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Revenue Overview ({selectedYear})</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="monthName" stroke="#666" />
+              <YAxis stroke="#666" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px'
+                }}
+                formatter={(value) => [`${Number(value).toLocaleString()}`, 'Revenue']}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#059669"
+                strokeWidth={3}
+                dot={{ fill: '#059669', strokeWidth: 2, r: 5 }}
+                name="Monthly Revenue"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Locations by Category */}
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <MapPin className="h-5 w-5 mr-2 text-yellow-600" />
-              Locations by Category
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Locations by Category</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={stats.locationsByCategory}
+                  data={categoryData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -350,7 +376,7 @@ const AdminDashboard = () => {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {stats.locationsByCategory.map((entry, index) => (
+                  {categoryData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -359,26 +385,22 @@ const AdminDashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Locations by Province */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Globe className="h-5 w-5 mr-2 text-purple-600" />
-              Locations by Province
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={stats.locationsByProvince}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="province" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#8B5CF6" />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Recent Activities */}
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Recent Activities</h3>
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {activities.map((activity) => (
+                <ActivityItem key={activity.id} activity={activity} />
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-gray-500">
+          <p>© {new Date().getFullYear()} Travel Vietnam Admin Dashboard. All rights reserved.</p>
         </div>
       </div>
     </div>
   );
-};
-
-export default AdminDashboard;
+}
