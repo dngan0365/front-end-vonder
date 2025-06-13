@@ -1,38 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌄 Vonders – Vietnam Scenic Explorer
 
-## Getting Started
+**Vonders** is a web-based platform to explore Vietnam’s most iconic destinations, cultural events, and travel tours. It supports different user roles with rich travel features and community interaction.
 
-First, run the development server:
+---
+**Website:** https://front-end-vonder.vercel.app
+**Backend repo:** 
+## ⚙️ Technology Stack
 
-```bash
-git clonehttps://github.com/dngan0365/front-end-vonder
-npm i
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend:** Next.js (React-based)
+- **Backend:** NestJS (Node.js framework)
+- **Database:** PostgreSQL
+- **Architecture:** RESTful API, Client–Server model
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 👥 User Roles & Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🧑 Guest & User
 
-## Learn More
+- **Home Page:**  
+  View popular destinations by region (North, Central, South) and province. Display monthly festivals and cultural events.
 
-To learn more about Next.js, take a look at the following resources:
+- **Explore Page:**  
+  Filter and search locations by type (cultural, historical, religious, etc.) and events by month.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Location & Event Detail Pages:**  
+  View detailed information about destinations and events.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Travel Page:**  
+  Discover available tours, flights, and hotels across provinces.
 
-## Deploy on Vercel
+- **Tour Detail Page:**  
+  View detailed tour information.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 🙋‍♂️ Registered User
+
+- **Trip Planning (Location Page):**  
+  - Plan trips to a location  
+  - Invite other users by email  
+  - Mark destinations as favorites
+
+- **Event Saving:**  
+  - Save and unsave events for later
+
+- **Forum & Blog:**  
+  - View, upvote/downvote, favorite, and comment on travel blogs  
+  - Create new blogs  
+  - View saved blogs
+
+- **Tour Booking & Review:**  
+  - Book tours created by agencies  
+  - Write reviews for completed tours
+
+- **Profile Management:**  
+  - Update avatar, name, email  
+  - View/manage created or joined trips  
+  - Manage favorite destinations and saved events
+
+- **Booking History:**  
+  View all bookings filtered by: All / Upcoming / Past / Cancelled
+
+---
+
+### 🏢 Travel Agency
+
+- **Authentication:**  
+  Register and login as an agency
+
+- **Tour Management:**  
+  - Add, edit, delete tours  
+  - Include title, description, itinerary, province, departure date, group size, price
+
+- **Booking Management:**  
+  - View bookings per tour  
+  - Change status: pending / confirmed / cancelled / completed
+
+- **Agency Profile:**  
+  View and update personal information
+
+---
+
+### 🛠️ Admin
+
+- **Location & Event Management:**  
+  - Add, edit, delete scenic locations and cultural events
+
+---
+
+## ✅ Project Highlights
+
+- Role-based access and secure authentication
+- Real-time data filtering for travel planning
+- Community-driven blogging and discussion
+- Modular and scalable architecture
+
+---
+
