@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import { FaMapMarkerAlt, FaUser, FaSignOutAlt, FaCalendar } from 'react-icons/fa';
-import { Table2 } from "lucide-react"
+import { Table2, LayoutDashboard } from "lucide-react"
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -19,11 +19,11 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    // { 
-    //   path: '/admin/dashboard', 
-    //   name: "Dashboard", 
-    //   icon: <FaUser className="text-lg" /> 
-    // },
+    { 
+      path: '/admin/dashboard', 
+      name: t('dashboard'), 
+      icon: <LayoutDashboard className="text-lg" /> 
+    },
     { 
       path: '/admin/location', 
       name: t('locations'), 

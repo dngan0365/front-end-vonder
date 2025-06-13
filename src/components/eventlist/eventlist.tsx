@@ -191,7 +191,7 @@ export default function EventList() {
                       </div>
                     </div>
                     <div className="p-4 text-center">
-                      <h3 className="text-2xl font-bold mb-2 hover:text-cyan-600 transition-colors">{event.name}</h3>
+                      <h3 className="text-2xl font-bold mb-2 hover:text-cyan-600 transition-colors line-clamp-1">{event.name}</h3>
                       <p className="text-gray-500 text-sm mb-2">
                         {new Date(event.startDate).toLocaleDateString('en-GB', { 
                           day: '2-digit', 
@@ -206,10 +206,10 @@ export default function EventList() {
                         }
                       </p> 
                       <div
-                        className="text-gray-600 mb-4 line-clamp-3 overflow-hidden"
+                        className="text-gray-600 mb-4 line-clamp-1 overflow-hidden"
                         dangerouslySetInnerHTML={{ __html: event.description }}
                       />
-                      <div className="text-right">
+                      <div className="text-right line-clamp-1">
                         <span className="text-gray-800 hover:text-cyan-600 transition-colors">
                           Detail
                         </span>
