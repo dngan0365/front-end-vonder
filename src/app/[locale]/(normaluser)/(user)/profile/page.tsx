@@ -461,7 +461,7 @@ export default function ProfilePage({ params }: { params: Promise<{ locale: stri
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">{t("trips")}</h2>
-        <Link href="/trips/create">
+        <Link href="/trip/create">
           <span className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

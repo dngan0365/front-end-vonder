@@ -20,6 +20,7 @@ export default function LocationSelector({
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [expandedLocations, setExpandedLocations] = useState({});
+  const [pagination, setPagination] = useState(null);
   
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   
@@ -27,20 +28,30 @@ export default function LocationSelector({
   useEffect(() => {
     if (debouncedSearchTerm.length < 2) {
       setSuggestions([]);
+      setPagination(null);
       return;
     }
     
     const fetchSuggestions = async () => {
       setIsLoading(true);
       try {
-        const results = await searchLocations(debouncedSearchTerm);
+        const response = await searchLocations(debouncedSearchTerm);
+        
+        // Handle the new paginated response format
+        const locations = response.data || [];
+        const paginationInfo = response.pagination || null;
+        
         // Filter out already selected locations
-        const filteredResults = results.filter(
+        const filteredResults = locations.filter(
           suggestion => !value.some(item => item.id === suggestion.id)
         );
+        
         setSuggestions(filteredResults);
+        setPagination(paginationInfo);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
+        setSuggestions([]);
+        setPagination(null);
       } finally {
         setIsLoading(false);
       }
@@ -61,6 +72,7 @@ export default function LocationSelector({
     onChange(newValue);
     setSearchTerm('');
     setSuggestions([]);
+    setPagination(null);
     
     // Auto-expand the newly added location
     setExpandedLocations(prev => ({
@@ -282,15 +294,33 @@ export default function LocationSelector({
             {isLoading ? (
               <div className="p-3 text-center text-gray-500">Loading...</div>
             ) : suggestions.length > 0 ? (
-              suggestions.map(suggestion => (
-                <div
-                  key={suggestion.id}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onMouseDown={() => handleSelect(suggestion)}
-                >
-                  {suggestion.name}
-                </div>
-              ))
+              <>
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onMouseDown={() => handleSelect(suggestion)}
+                  >
+                    <div className="font-medium">{suggestion.name}</div>
+                    {suggestion.address && (
+                      <div className="text-sm text-gray-500">{suggestion.address}</div>
+                    )}
+                    {suggestion.category && (
+                      <div className="text-xs text-blue-600 mt-1">{suggestion.category}</div>
+                    )}
+                  </div>
+                ))}
+                
+                {/* Pagination Info */}
+                {pagination && (
+                  <div className="p-2 text-xs text-gray-500 bg-gray-50 border-t">
+                    Showing {suggestions.length} of {pagination.total} results
+                    {pagination.totalPages > 1 && (
+                      <span> (Page {pagination.page} of {pagination.totalPages})</span>
+                    )}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="p-3 text-center text-gray-500">
                 {searchTerm.length >= 2 ? 'No locations found' : 'Type at least 2 characters to search'}
